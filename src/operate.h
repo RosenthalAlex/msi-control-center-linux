@@ -22,6 +22,7 @@
 
 #include <string>
 #include <QVector>
+#include <optional>
 
 enum class charging_state {
     battery_charging,
@@ -111,6 +112,7 @@ public:
     [[nodiscard]] bool isKeyboardBacklightSupport() const;
     [[nodiscard]] bool isUsbPowerShareSupport() const;
     [[nodiscard]] bool isWebCamOffSupport() const;
+    [[nodiscard]] bool rawEcFeaturesAllowed() const;
 
     void loadSettings() const;
     void handleWakeEvent() const;

@@ -18,33 +18,40 @@
 
 #include "mainwindow.h"
 #include <QApplication>
-#include <QTranslator>
 #include <QDBusConnectionInterface>
+#include <QLibraryInfo>
+#include <QTranslator>
 
 int main(int argc, char *argv[]) {
     const QString serviceName = "io.github.dmitry_s93.MControlCenter";
 
-    if (QDBusConnection::sessionBus().interface()->isServiceRegistered(serviceName)) {
-        fprintf(stderr, "Another instance of the application is already running\n");
-        return 0;
-    }
-
-    if (!QDBusConnection::sessionBus().registerService(serviceName)) {
-        fprintf(stderr, "Failed to register D-Bus service\n");
-        return 1;
+    QDBusConnection sessionBus = QDBusConnection::sessionBus();
+    if (sessionBus.isConnected()) {
+        if (sessionBus.interface()->isServiceRegistered(serviceName)) {
+            fprintf(stderr, "Another instance of the application is already running\n");
+            return 0;
+        }
+        if (!sessionBus.registerService(serviceName)) {
+            fprintf(stderr, "Failed to register D-Bus service\n");
+            return 1;
+        }
     }
 
     QApplication a(argc, argv);
+    QApplication::setApplicationName("MControlCenter");
+    QApplication::setApplicationVersion(MControlCenter_VERSION);
+    QApplication::setDesktopFileName("mcontrolcenter");
 
+    // Qt's own strings (e.g. the color dialog)
+    QTranslator qtTranslator;
+    if (qtTranslator.load(QLocale(), "qtbase", "_", QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
+        QApplication::installTranslator(&qtTranslator);
+
+#ifdef MCC_HAS_TRANSLATIONS
     QTranslator translator;
-    const QStringList uiLanguages = QLocale::system().uiLanguages();
-    for (const QString &locale: uiLanguages) {
-        const QString baseName = "lang_" + QLocale(locale).name();
-        if (translator.load(":/translations/" + baseName)) {
-            QApplication::installTranslator(&translator);
-            break;
-        }
-    }
+    if (translator.load(QLocale(), "MControlCenter", "_", ":/translations"))
+        QApplication::installTranslator(&translator);
+#endif
 
     MainWindow w;
 

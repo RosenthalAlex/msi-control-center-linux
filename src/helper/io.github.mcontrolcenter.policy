@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+ "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  <vendor>MControlCenter</vendor>
+  <vendor_url>https://github.com/dmitry-s93/MControlCenter</vendor_url>
+  <icon_name>mcontrolcenter</icon_name>
+
+  <action id="io.github.mcontrolcenter.control">
+    <description>Change MSI laptop hardware settings</description>
+    <description xml:lang="hu">MSI laptop hardverbeállításainak módosítása</description>
+    <message>Authentication is required to change MSI laptop hardware settings</message>
+    <message xml:lang="hu">Az MSI laptop hardverbeállításainak módosításához hitelesítés szükséges</message>
+    <defaults>
+      <allow_any>auth_admin_keep</allow_any>
+      <allow_inactive>auth_admin_keep</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+  </action>
+</policyconfig>

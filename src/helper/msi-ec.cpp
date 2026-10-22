@@ -17,6 +17,7 @@
  */
 
 #include "msi-ec.h"
+#include "polkit.h"
 #include <QFile>
 
 // Available entries: https://github.com/BeardOverflow/msi-ec?tab=readme-ov-file#usage
@@ -48,10 +49,13 @@ const QString msi_ec_kbd_backlight_brightness = "/sys/class/leds/msiacpi::kbd_ba
 
 QString MsiEc::readFile(QString path) const {
     if (QFile file(path); file.exists() && file.open(QIODevice::ReadOnly)) {
+        QByteArray data = file.readAll();
         // Remove only the last '\n'
-        return file.readAll().chopped(1);
+        if (data.endsWith('\n'))
+            data.chop(1);
+        return QString::fromUtf8(data);
     }
-    return "";
+    return {};
 }
 
 bool MsiEc::readFileOnOff(QString path) const {
@@ -59,9 +63,16 @@ bool MsiEc::readFileOnOff(QString path) const {
 }
 
 void MsiEc::writeFile(QString path, QString value) const {
-    if (QFile file(path); file.exists() && file.open(QIODevice::WriteOnly)) {
-        file.write(value.toUtf8());
+    if (!Polkit::checkAuthorization(parent()))
+        return;
+    QFile file(path);
+    if (!file.exists() || !file.open(QIODevice::WriteOnly)) {
+        fprintf(stderr, "Cannot open %s for writing\n", qPrintable(path));
+        return;
     }
+    if (file.write(value.toUtf8()) < 0)
+        fprintf(stderr, "Writing '%s' to %s failed: %s\n", qPrintable(value), qPrintable(path),
+                qPrintable(file.errorString()));
 }
 
 void MsiEc::writeFileOnOff(QString path, bool on) const {

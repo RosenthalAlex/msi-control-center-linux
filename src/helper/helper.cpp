@@ -18,16 +18,21 @@
 
 #include "helper.h"
 #include "msi-ec.h"
+#include "keyboard-rgb.h"
+#include "polkit.h"
 #include "readwrite.h"
 #include <QCoreApplication>
 #include <QDBusConnection>
 #include <QDBusError>
 #include <QProcess>
+#include <QStandardPaths>
 #include <QTimer>
 
 ReadWrite rw;
 
 void Helper::quit() const {
+    if (!Polkit::checkAuthorization(parent()))
+        return;
     QTimer::singleShot(0, QCoreApplication::instance(), &QCoreApplication::quit);
 }
 
@@ -36,6 +41,12 @@ QByteArray Helper::getData() const {
 }
 
 void Helper::putValue(const int &address, const int &value) const {
+    if (!Polkit::checkAuthorization(parent()))
+        return;
+    if (address < 0 || address > 255) {
+        fprintf(stderr, "tried to write invalid address: %d\n", address);
+        return;
+    }
     if (value >= 0 && value <= 255)
         rw.writeToFile(address, value);
     else
@@ -55,33 +66,46 @@ bool Helper::isEcSysModuleLoaded() const {
 }
 
 bool Helper::loadEcSysModule() const {
-    fprintf(stderr, "%s\n", qPrintable("Trying to load the ec_sys kernel module"));
-    auto *process = new QProcess();
-    process->start("sh", QStringList() << "-c" << "/usr/sbin/modprobe ec_sys write_support=1 2>&1");
-    process->waitForFinished(1000);
-    if (QByteArray output = process->readAllStandardOutput(); output != "")
-        fprintf(stderr, "%s", qPrintable(output));
-    if (isEcSysModuleLoaded())
-        return true;
-    return false;
+    if (!Polkit::checkAuthorization(parent()))
+        return false;
+    fprintf(stderr, "%s\n", "Trying to load the ec_sys kernel module");
+    QProcess process;
+    process.setProcessChannelMode(QProcess::MergedChannels);
+    const QString modprobe = QStandardPaths::findExecutable(
+            "modprobe", {"/usr/bin", "/usr/sbin", "/bin", "/sbin"});
+    if (modprobe.isEmpty()) {
+        fprintf(stderr, "modprobe not found\n");
+        return false;
+    }
+    process.start(modprobe, {"ec_sys", "write_support=1"});
+    process.waitForFinished(3000);
+    if (const QByteArray output = process.readAll(); !output.isEmpty())
+        fprintf(stderr, "%s", output.constData());
+    return isEcSysModuleLoaded();
 }
 
 int main(int argc, char *argv[]) {
     QCoreApplication a(argc, argv);
+    Polkit::registerTypes();
 
-    QObject obj;
+    QDBusConnection bus = QDBusConnection::systemBus();
+
+    DBusContextObject obj;
     auto *helper = new Helper(&obj);
     QObject::connect(&a, &QCoreApplication::aboutToQuit, helper, &Helper::aboutToQuit);
-    helper->setProperty("value", "initial value");
-    QDBusConnection::systemBus().registerObject("/", &obj);
+    bus.registerObject("/", &obj);
 
-    QObject objMsiEc;
-    auto *helperMsiEc = new MsiEc(&objMsiEc);
-    QDBusConnection::systemBus().registerObject("/msi_ec", &objMsiEc);
+    DBusContextObject objMsiEc;
+    new MsiEc(&objMsiEc);
+    bus.registerObject("/msi_ec", &objMsiEc);
 
-    if (!QDBusConnection::systemBus().registerService(SERVICE_NAME)) {
-        fprintf(stderr, "%s\n", qPrintable(QDBusConnection::systemBus().lastError().message()));
-        exit(1);
+    DBusContextObject objKbdRgb;
+    new KeyboardRgb(&objKbdRgb);
+    bus.registerObject("/keyboard_rgb", &objKbdRgb);
+
+    if (!bus.registerService(SERVICE_NAME)) {
+        fprintf(stderr, "%s\n", qPrintable(bus.lastError().message()));
+        return 1;
     }
 
     return QCoreApplication::exec();

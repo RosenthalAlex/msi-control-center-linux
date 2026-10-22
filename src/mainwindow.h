@@ -30,6 +30,8 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+class KeyboardRgbWidget;
+
 class MainWindow : public QMainWindow {
 Q_OBJECT
 
@@ -67,6 +69,8 @@ private:
     void updateUserMode();
     void updateFanMode();
     void updateFanSpeedSettings();
+    void updateSystemInfo();
+    void createExtraWidgets();
 
     void setBestMobility();
     void setBalancedBattery();
@@ -100,7 +104,17 @@ private:
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void saveStateRequest(QSessionManager &sessionManager);
 
-    QSystemTrayIcon *trayIcon = nullptr;;
+    KeyboardRgbWidget *keyboardRgbWidget = nullptr;
+    QLabel *dGpuLabel = nullptr;
+    QLabel *dGpuValueLabel = nullptr;
+    QLabel *powerLabel = nullptr;
+    QLabel *powerValueLabel = nullptr;
+    QLabel *batteryHealthValueLabel = nullptr;
+    QLabel *batteryCapacityValueLabel = nullptr;
+    QLabel *batteryCyclesValueLabel = nullptr;
+    QLabel *batteryModelValueLabel = nullptr;
+
+    QSystemTrayIcon *trayIcon = nullptr;
     QMenu *trayIconMenu = nullptr;
     QMenu *modeTrayMenu = nullptr;
     QMenu *fanTrayMenu = nullptr;

@@ -2,6 +2,117 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="en_US" sourcelanguage="en_US">
 <context>
+    <name>KeyboardRgbWidget</name>
+    <message>
+        <source>Controller: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No supported RGB keyboard controller was found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Effect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Static</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Breathing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Color cycle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Rainbow wave</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Brightness:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cycle time:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Duration of one animation cycle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Right to left</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Left to right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Direction:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zone colors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Same color for all zones</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zone %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Presets:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restore this lighting when MControlCenter starts and after sleep</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save to keyboard memory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stores the current lighting in the keyboard controller, so it stays after a reboot even without MControlCenter.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keyboard lighting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saving to the keyboard failed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 s</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zone %1 color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not change the keyboard lighting. Is the helper running and are you allowed to change hardware settings?</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>EC Version:</source>
@@ -116,16 +227,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Couldn&apos;t connect to UPower to get charger status.
-Make sure that UPower is installed and running then restart the app.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t connect to Power Profiles Daemon.
-Make sure that either Power Profiles Daemon or TuneD is installed and restart the app.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Mode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -154,6 +255,70 @@ Make sure that either Power Profiles Daemon or TuneD is installed and restart th
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>dGPU:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Power state of the discrete graphics card. &quot;Sleeping&quot; saves battery.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Power:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Battery health</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Health:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Capacity:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Charge cycles:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Battery:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>RGB Lighting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Active</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sleeping</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(discrete GPU only mode)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(from battery)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>(charging)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 Wh of %2 Wh (design)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not reported</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Auto</source>
         <translation type="unfinished"></translation>
     </message>
@@ -166,15 +331,17 @@ Make sure that either Power Profiles Daemon or TuneD is installed and restart th
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Couldn&apos;t connect to UPower to get charger status.
+Make sure that UPower is installed and running then restart the system.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t connect to Power Profiles Daemon.
+Make sure that either Power Profiles Daemon or TuneD is installed and restart the system.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Cooling</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fan 1 speed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fan 2 speed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -227,6 +394,14 @@ Make sure that either Power Profiles Daemon or TuneD is installed and restart th
     </message>
     <message>
         <source>Automatic Profile Switching</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CPU Fan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPU Fan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
