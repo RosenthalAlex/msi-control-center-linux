@@ -19,6 +19,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QDBusConnectionInterface>
+#include <QDBusMessage>
 #include <QLibraryInfo>
 #include <QTranslator>
 
@@ -28,6 +29,9 @@ int main(int argc, char *argv[]) {
     QDBusConnection sessionBus = QDBusConnection::sessionBus();
     if (sessionBus.isConnected()) {
         if (sessionBus.interface()->isServiceRegistered(serviceName)) {
+            // Bring the running instance's window to the front instead.
+            QDBusMessage msg = QDBusMessage::createMethodCall(serviceName, "/", "io.github.dmitry_s93.MControlCenter.Window", "activate");
+            sessionBus.call(msg, QDBus::Block, 3000);
             fprintf(stderr, "Another instance of the application is already running\n");
             return 0;
         }
@@ -54,6 +58,12 @@ int main(int argc, char *argv[]) {
 #endif
 
     MainWindow w;
+    if (sessionBus.isConnected())
+        sessionBus.registerObject("/", &w, QDBusConnection::ExportScriptableSlots);
+
+    // At login the app starts with --background and stays in the tray.
+    if (!QApplication::arguments().contains("--background"))
+        w.show();
 
     return QApplication::exec();
 }

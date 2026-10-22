@@ -327,6 +327,7 @@ fan_mode Operate::getFanMode() const {
 }
 
 void Operate::setBatteryThreshold(int value) const {
+    Settings::setValue(settingsGroup + "BatteryThreshold", value);
     if (msiEcHelper.hasBatteryEndThreshold())
         return msiEcHelper.setBatteryEndThreshold(value);
     if (value != getBatteryThreshold())
@@ -561,6 +562,16 @@ void Operate::loadSettings() const {
             setUserMode(user_mode::silent_mode);
         else if (value == "super_battery_mode")
             setUserMode(user_mode::super_battery_mode);
+    }
+
+    // The EC may forget the charge limit after a full power-off.
+    if (isBatteryThresholdSupport() && s.isValueExist(settingsGroup + "BatteryThreshold")) {
+        int saved = s.getValue(settingsGroup + "BatteryThreshold").toInt();
+        int current = getBatteryThreshold();
+        if (current == 0)
+            current = 100; // 0 means "no limit"
+        if (saved >= 10 && saved <= 100 && saved != current)
+            setBatteryThreshold(saved);
     }
 
     if (s.isValueExist(settingsGroup + "FnSuperSwap"))

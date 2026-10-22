@@ -24,6 +24,7 @@
 #include "sysinfo.h"
 #include <QTimer>
 #include <QMessageBox>
+#include <QStandardPaths>
 
 Operate operate;
 PowerMonitor powerMonitor;
@@ -415,7 +416,59 @@ void MainWindow::updateFan2Speed() {
     }
 }
 
+void MainWindow::activate() {
+    showNormal();
+    raise();
+    activateWindow();
+}
+
+QString MainWindow::autostartFilePath() {
+    return QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/autostart/mcontrolcenter.desktop";
+}
+
+bool MainWindow::isAutostartEnabled() {
+    return QFile::exists(autostartFilePath());
+}
+
+void MainWindow::setAutostartEnabled(bool enabled) {
+    const QString path = autostartFilePath();
+    if (enabled) {
+        QDir().mkpath(QFileInfo(path).absolutePath());
+        QFile file(path);
+        if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+            file.write("[Desktop Entry]\n"
+                       "Type=Application\n"
+                       "Name=MControlCenter\n"
+                       "Comment=Restore MSI laptop settings at login\n"
+                       "Exec=mcontrolcenter --background\n"
+                       "Icon=mcontrolcenter\n"
+                       "Terminal=false\n"
+                       "X-GNOME-Autostart-enabled=true\n"
+                       "X-GNOME-Autostart-Delay=3\n");
+        } else {
+            QMessageBox::warning(this, windowTitle(), tr("Could not create %1").arg(path));
+        }
+    } else {
+        QFile::remove(path);
+    }
+    const bool on = isAutostartEnabled();
+    const QSignalBlocker b1(autostartCheckBox);
+    const QSignalBlocker b2(autostartAction);
+    autostartCheckBox->setChecked(on);
+    autostartAction->setChecked(on);
+}
+
 void MainWindow::createExtraWidgets() {
+    // Start at login
+    autostartCheckBox = new QCheckBox(tr("Start automatically at login (in the background)"), this);
+    autostartCheckBox->setToolTip(tr("Restores your mode, fan curves, charge limit and keyboard lighting "
+                                     "after every login and keeps automatic switching running."));
+    autostartCheckBox->setChecked(isAutostartEnabled());
+    ui->formLayout_5->addRow(autostartCheckBox);
+    connect(autostartCheckBox, &QCheckBox::toggled, this, &MainWindow::setAutostartEnabled);
+    autostartAction->setChecked(isAutostartEnabled());
+    connect(autostartAction, &QAction::toggled, this, &MainWindow::setAutostartEnabled);
+
     // Overview: discrete GPU power state and battery power
     const int row = ui->gridLayout_8->rowCount();
     dGpuLabel = new QLabel(tr("dGPU:"), this);
@@ -1045,6 +1098,8 @@ void MainWindow::createTrayIcon() {
     trayIconMenu->addMenu(fanTrayMenu);
     trayIconMenu->addMenu(batteryTrayMenu);
     trayIconMenu->addSeparator();
+    trayIconMenu->addAction(autostartAction);
+    trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);
 
     trayIcon = new QSystemTrayIcon(this);
@@ -1091,6 +1146,9 @@ void MainWindow::createActions() {
     connect(bestMobilityAction, &QAction::triggered, this, &MainWindow::setBestMobility);
     connect(balancedBatteryAction, &QAction::triggered, this, &MainWindow::setBalancedBattery);
     connect(bestBatteryAction, &QAction::triggered, this, &MainWindow::setBestBattery);
+
+    autostartAction = new QAction(tr("Start at login"), this);
+    autostartAction->setCheckable(true);
 
     quitAction = new QAction(tr("Quit"), this);
     connect(quitAction, &QAction::triggered, this, &MainWindow::quitApp);
