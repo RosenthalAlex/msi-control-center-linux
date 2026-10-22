@@ -247,6 +247,10 @@
         <translation>Afficher</translation>
     </message>
     <message>
+        <source>Start at login</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Quit</source>
         <translation>Quitter</translation>
     </message>
@@ -260,6 +264,18 @@
     </message>
     <message>
         <source>Switches the mode when the charger is plugged in or removed. Turns off following the system power profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not create %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start automatically at login (in the background)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restores your mode, fan curves, charge limit and keyboard lighting after every login and keeps automatic switching running.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -34,12 +34,17 @@ class KeyboardRgbWidget;
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "io.github.dmitry_s93.MControlCenter.Window")
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void updateData();
     static void setUpdateDataError(bool error);
+
+public slots:
+    /// Called over D-Bus when the app is launched a second time.
+    Q_SCRIPTABLE void activate();
 
 private:
     Ui::MainWindow *ui;
@@ -105,6 +110,11 @@ private:
     void saveStateRequest(QSessionManager &sessionManager);
 
     KeyboardRgbWidget *keyboardRgbWidget = nullptr;
+    QCheckBox *autostartCheckBox = nullptr;
+    QAction *autostartAction = nullptr;
+    static QString autostartFilePath();
+    static bool isAutostartEnabled();
+    void setAutostartEnabled(bool enabled);
     QLabel *dGpuLabel = nullptr;
     QLabel *dGpuValueLabel = nullptr;
     QLabel *powerLabel = nullptr;
