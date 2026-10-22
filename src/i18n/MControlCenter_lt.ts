@@ -332,6 +332,14 @@ Check the &lt;About&gt; page for more info.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Switches the mode when the system power profile changes (e.g. from the GNOME/KDE power menu). Turns off automatic switching on charger/battery.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Switches the mode when the charger is plugged in or removed. Turns off following the system power profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Loaded</source>
         <translation type="unfinished"></translation>
     </message>

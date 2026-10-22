@@ -184,6 +184,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->userModeOnBatteryComboBox->setCurrentIndex(s.getValue("Settings/UserModeOnBattery").toInt());
     ui->userModeOnChargerComboBox->setCurrentIndex(s.getValue("Settings/UserModeOnCharger").toInt());
     ui->autoPPDCheckBox->setChecked(s.getValue("Settings/autoPPDstate").toBool());
+    ui->autoPPDCheckBox->setToolTip(tr("Switches the mode when the system power profile changes "
+                                       "(e.g. from the GNOME/KDE power menu). "
+                                       "Turns off automatic switching on charger/battery."));
+    ui->autoAcDcProfilesGroupBox->setToolTip(tr("Switches the mode when the charger is plugged in or removed. "
+                                                "Turns off following the system power profile."));
 }
 
 MainWindow::~MainWindow() {
@@ -816,8 +821,6 @@ void MainWindow::on_ChargerStateChange(bool isCharging) {
         } else {
             setModeFromSelection(batteryProfile);
         }
-    } else {
-        ui->autoPPDCheckBox->setEnabled(1);
     }
 }
 
@@ -930,21 +933,18 @@ void MainWindow::on_userModeOnChargerComboBox_currentIndexChanged(int index) con
 }
 
 void MainWindow::on_autoAcDcProfilesGroupBox_toggled(bool checked) {
-    if(checked) {
+    if (checked) {
         if (!powerMonitor.connectToUpower()) {
             QMessageBox::critical(nullptr, this->windowTitle(), tr("Couldn't connect to UPower to get charger status.\n"
                                                                    "Make sure that UPower is installed and running then restart the system."));
-            ui->autoAcDcProfilesGroupBox->setChecked(0);
-            ui->autoAcDcProfilesGroupBox->setEnabled(0);
+            ui->autoAcDcProfilesGroupBox->setChecked(false);
             return;
         }
-
-        powerMonitor.disconnectFromPowerProfiles();
-        ui->autoPPDCheckBox->setChecked(0);
-        ui->autoPPDCheckBox->setEnabled(0);
+        // The two automatic modes exclude each other: switch the other one off.
+        if (ui->autoPPDCheckBox->isChecked())
+            ui->autoPPDCheckBox->setChecked(false);
         powerMonitor.queryChargerState();
     } else {
-        ui->autoPPDCheckBox->setEnabled(1);
         powerMonitor.disconnectFromUpower();
     }
 
@@ -953,29 +953,26 @@ void MainWindow::on_autoAcDcProfilesGroupBox_toggled(bool checked) {
 
 void MainWindow::on_autoPPDCheckBox_toggled(bool checked) {
     if (checked) {
-
         if (!powerMonitor.connectToPowerProfiles()) {
             QMessageBox::critical(nullptr, this->windowTitle(), tr("Couldn't connect to Power Profiles Daemon.\n"
                                                                    "Make sure that either Power Profiles Daemon or TuneD is installed and restart the system."));
-            ui->autoPPDCheckBox->setChecked(0);
+            ui->autoPPDCheckBox->setChecked(false);
             return;
         }
-
-        powerMonitor.disconnectFromUpower();
-        ui->highPerformanceModeRadioButton->setEnabled(0);
-        ui->balancedModeRadioButton->setEnabled(0);
-        ui->silentModeRadioButton->setEnabled(0);
-        ui->superBatteryModeRadioButton->setEnabled(0);
-        ui->autoAcDcProfilesGroupBox->setChecked(0);
-        ui->autoAcDcProfilesGroupBox->setEnabled(0);
+        // The two automatic modes exclude each other: switch the other one off.
+        if (ui->autoAcDcProfilesGroupBox->isChecked())
+            ui->autoAcDcProfilesGroupBox->setChecked(false);
         powerMonitor.queryPowerProfile();
     } else {
-        ui->highPerformanceModeRadioButton->setEnabled(1);
-        ui->balancedModeRadioButton->setEnabled(1);
-        ui->silentModeRadioButton->setEnabled(1);
-        ui->superBatteryModeRadioButton->setEnabled(1);
-        ui->autoAcDcProfilesGroupBox->setEnabled(1);
+        powerMonitor.disconnectFromPowerProfiles();
     }
+
+    // While following the system profile, modes are picked automatically.
+    ui->highPerformanceModeRadioButton->setEnabled(!checked);
+    ui->balancedModeRadioButton->setEnabled(!checked);
+    ui->silentModeRadioButton->setEnabled(!checked);
+    ui->superBatteryModeRadioButton->setEnabled(!checked);
+
     Settings::setValue("Settings/autoPPDstate", checked);
 }
 
