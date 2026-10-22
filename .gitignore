@@ -35,3 +35,9 @@
 /build/
 /scripts/*.tar.gz
 /scripts/MControlCenter-*-bin/
+
+# makepkg
+/packaging/arch/src/
+/packaging/arch/pkg/
+/packaging/arch/build/
+/packaging/arch/*.pkg.tar.*

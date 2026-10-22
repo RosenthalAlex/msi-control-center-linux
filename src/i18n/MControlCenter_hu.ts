@@ -2,6 +2,117 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="hu_HU" sourcelanguage="en_US">
 <context>
+    <name>KeyboardRgbWidget</name>
+    <message>
+        <source>Controller: %1</source>
+        <translation>Vezérlő: %1</translation>
+    </message>
+    <message>
+        <source>No supported RGB keyboard controller was found.</source>
+        <translation>Nem található támogatott RGB billentyűzet-vezérlő.</translation>
+    </message>
+    <message>
+        <source>Effect</source>
+        <translation>Effekt</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation>Kikapcsolva</translation>
+    </message>
+    <message>
+        <source>Static</source>
+        <translation>Állandó szín</translation>
+    </message>
+    <message>
+        <source>Breathing</source>
+        <translation>Lélegzés</translation>
+    </message>
+    <message>
+        <source>Color cycle</source>
+        <translation>Színciklus</translation>
+    </message>
+    <message>
+        <source>Rainbow wave</source>
+        <translation>Szivárványhullám</translation>
+    </message>
+    <message>
+        <source>Mode:</source>
+        <translation>Mód:</translation>
+    </message>
+    <message>
+        <source>Brightness:</source>
+        <translation>Fényerő:</translation>
+    </message>
+    <message>
+        <source>Cycle time:</source>
+        <translation>Ciklusidő:</translation>
+    </message>
+    <message>
+        <source>Duration of one animation cycle</source>
+        <translation>Egy animációs ciklus hossza</translation>
+    </message>
+    <message>
+        <source>Right to left</source>
+        <translation>Jobbról balra</translation>
+    </message>
+    <message>
+        <source>Left to right</source>
+        <translation>Balról jobbra</translation>
+    </message>
+    <message>
+        <source>Direction:</source>
+        <translation>Irány:</translation>
+    </message>
+    <message>
+        <source>Zone colors</source>
+        <translation>Zónák színe</translation>
+    </message>
+    <message>
+        <source>Same color for all zones</source>
+        <translation>Minden zóna azonos színű</translation>
+    </message>
+    <message>
+        <source>Zone %1</source>
+        <translation>%1. zóna</translation>
+    </message>
+    <message>
+        <source>Presets:</source>
+        <translation>Gyors színek:</translation>
+    </message>
+    <message>
+        <source>Restore this lighting when MControlCenter starts and after sleep</source>
+        <translation>Világítás visszaállítása az MControlCenter indulásakor és alvás után</translation>
+    </message>
+    <message>
+        <source>Save to keyboard memory</source>
+        <translation>Mentés a billentyűzet memóriájába</translation>
+    </message>
+    <message>
+        <source>Stores the current lighting in the keyboard controller, so it stays after a reboot even without MControlCenter.</source>
+        <translation>Elmenti a jelenlegi világítást a billentyűzet vezérlőjébe, így újraindítás után is megmarad, akkor is, ha az MControlCenter nem fut.</translation>
+    </message>
+    <message>
+        <source>Keyboard lighting</source>
+        <translation>Billentyűzet-világítás</translation>
+    </message>
+    <message>
+        <source>Saving to the keyboard failed.</source>
+        <translation>A mentés a billentyűzetre nem sikerült.</translation>
+    </message>
+    <message>
+        <source>%1 s</source>
+        <translation>%1 mp</translation>
+    </message>
+    <message>
+        <source>Zone %1 color</source>
+        <translation>%1. zóna színe</translation>
+    </message>
+    <message>
+        <source>Could not change the keyboard lighting. Is the helper running and are you allowed to change hardware settings?</source>
+        <translation>Nem sikerült módosítani a billentyűzet világítását. Fut a helper szolgáltatás, és van jogosultságod a hardverbeállítások módosítására?</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <source>EC Version:</source>
@@ -13,11 +124,11 @@
     </message>
     <message>
         <source>Battery charge:</source>
-        <translation>Akumulátor töltöttség:</translation>
+        <translation>Akkumulátor töltöttség:</translation>
     </message>
     <message>
         <source>Battery threshold:</source>
-        <translation>Akumulátor korlátozás:</translation>
+        <translation>Akkumulátor korlátozás:</translation>
     </message>
     <message>
         <source>CPU temp:</source>
@@ -33,7 +144,7 @@
     </message>
     <message>
         <source>Battery</source>
-        <translation>Akumulátor</translation>
+        <translation>Akkumulátor</translation>
     </message>
     <message>
         <source>Best for Mobility</source>
@@ -49,7 +160,7 @@
     </message>
     <message>
         <source>Best for battery</source>
-        <translation>Akumulátor szempontjából a legjobb</translation>
+        <translation>Akkumulátor szempontjából a legjobb</translation>
     </message>
     <message>
         <source>Charge the battery when under 50%, stop at 60%</source>
@@ -125,7 +236,7 @@
     </message>
     <message>
         <source>Super Battery</source>
-        <translation>Super Akumulátor</translation>
+        <translation>Super Akkumulátor</translation>
     </message>
     <message>
         <source>Apply</source>
@@ -144,6 +255,70 @@
         <translation>Töltési korlát</translation>
     </message>
     <message>
+        <source>dGPU:</source>
+        <translation>dGPU:</translation>
+    </message>
+    <message>
+        <source>Power state of the discrete graphics card. &quot;Sleeping&quot; saves battery.</source>
+        <translation>A dedikált videókártya energiaállapota. Az „Alvó” állapot kíméli az akkumulátort.</translation>
+    </message>
+    <message>
+        <source>Power:</source>
+        <translation>Teljesítmény:</translation>
+    </message>
+    <message>
+        <source>Battery health</source>
+        <translation>Akkumulátor állapota</translation>
+    </message>
+    <message>
+        <source>Health:</source>
+        <translation>Állapot:</translation>
+    </message>
+    <message>
+        <source>Capacity:</source>
+        <translation>Kapacitás:</translation>
+    </message>
+    <message>
+        <source>Charge cycles:</source>
+        <translation>Töltési ciklusok:</translation>
+    </message>
+    <message>
+        <source>Battery:</source>
+        <translation>Akkumulátor:</translation>
+    </message>
+    <message>
+        <source>RGB Lighting</source>
+        <translation>RGB világítás</translation>
+    </message>
+    <message>
+        <source>Active</source>
+        <translation>Aktív</translation>
+    </message>
+    <message>
+        <source>Sleeping</source>
+        <translation>Alvó</translation>
+    </message>
+    <message>
+        <source>(discrete GPU only mode)</source>
+        <translation>(csak dedikált GPU mód)</translation>
+    </message>
+    <message>
+        <source>(from battery)</source>
+        <translation>(akkumulátorról)</translation>
+    </message>
+    <message>
+        <source>(charging)</source>
+        <translation>(töltés)</translation>
+    </message>
+    <message>
+        <source>%1 Wh of %2 Wh (design)</source>
+        <translation>%1 Wh / %2 Wh (gyári)</translation>
+    </message>
+    <message>
+        <source>Not reported</source>
+        <translation>Nem elérhető</translation>
+    </message>
+    <message>
         <source>Auto</source>
         <translation>Automatikus</translation>
     </message>
@@ -156,16 +331,20 @@
         <translation>Haladó</translation>
     </message>
     <message>
+        <source>Couldn&apos;t connect to UPower to get charger status.
+Make sure that UPower is installed and running then restart the system.</source>
+        <translation>Nem sikerült csatlakozni a UPowerhez a töltő állapotának lekérdezéséhez.
+Ellenőrizd, hogy a UPower telepítve van és fut, majd indítsd újra a rendszert.</translation>
+    </message>
+    <message>
+        <source>Couldn&apos;t connect to Power Profiles Daemon.
+Make sure that either Power Profiles Daemon or TuneD is installed and restart the system.</source>
+        <translation>Nem sikerült csatlakozni a Power Profiles Daemonhoz.
+Ellenőrizd, hogy a Power Profiles Daemon vagy a TuneD telepítve van, majd indítsd újra a rendszert.</translation>
+    </message>
+    <message>
         <source>Cooling</source>
         <translation>Hűtés</translation>
-    </message>
-    <message>
-        <source>Fan 1 speed</source>
-        <translation>Ventilátor 1 sebessége</translation>
-    </message>
-    <message>
-        <source>Fan 2 speed</source>
-        <translation>Ventilátor 2 sebessége</translation>
     </message>
     <message>
         <source>Reset</source>
@@ -181,124 +360,149 @@
     </message>
     <message>
         <source>Overview</source>
-        <translation type="unfinished"></translation>
+        <translation>Áttekintés</translation>
     </message>
     <message>
         <source>The middle spot between fan noise and power usage</source>
-        <translation type="unfinished"></translation>
+        <translation>Egyensúly a ventilátorzaj és a fogyasztás között</translation>
     </message>
     <message>
         <source>Low fan noise and moderate power usage</source>
-        <translation type="unfinished"></translation>
+        <translation>Alacsony ventilátorzaj és mérsékelt fogyasztás</translation>
     </message>
     <message>
         <source>Limits performance and turns off fans at lower temperatures</source>
-        <translation type="unfinished"></translation>
+        <translation>Korlátozza a teljesítményt, és alacsonyabb hőmérsékleten kikapcsolja a ventilátorokat</translation>
     </message>
     <message>
         <source>GPU Fan:</source>
-        <translation type="unfinished"></translation>
+        <translation>GPU ventilátor:</translation>
     </message>
     <message>
         <source>CPU Fan:</source>
-        <translation type="unfinished"></translation>
+        <translation>CPU ventilátor:</translation>
     </message>
     <message>
         <source>USB Power</source>
-        <translation type="unfinished"></translation>
+        <translation>USB töltés</translation>
     </message>
     <message>
         <source>FN ⇄ Meta</source>
-        <translation type="unfinished"></translation>
+        <translation>FN ⇄ Meta</translation>
     </message>
     <message>
         <source>Current fan Mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Jelenlegi ventilátormód:</translation>
     </message>
     <message>
         <source>Keyboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Billentyűzet</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;MC&lt;/span&gt;ontrol&lt;span style=&quot; font-weight:700;&quot;&gt;C&lt;/span&gt;enter (MCC) is an application that allows you to change the settings of MSI laptops running Linux.&lt;/p&gt;&lt;p&gt;MCC acts as a graphical interface for the &lt;span style=&quot; font-weight:700;&quot;&gt;MSI-EC &lt;/span&gt;driver that already exist in the Linux kernel, if your device is not supported (grey buttons/limited in-app functionality), please visit the msi-ec github page to get help.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Az &lt;span style=&quot; font-weight:700;&quot;&gt;MC&lt;/span&gt;ontrol&lt;span style=&quot; font-weight:700;&quot;&gt;C&lt;/span&gt;enter (MCC) egy alkalmazás, amellyel Linux alatt módosíthatod az MSI laptopok beállításait.&lt;/p&gt;&lt;p&gt;Az MCC a Linux kernelben már meglévő &lt;span style=&quot; font-weight:700;&quot;&gt;MSI-EC &lt;/span&gt;illesztőprogram grafikus felülete. Ha az eszközöd nem támogatott (szürke gombok, korlátozott funkciók), az msi-ec GitHub oldalán kérhetsz segítséget.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>MCC GitHub:</source>
-        <translation type="unfinished"></translation>
+        <translation>MCC GitHub:</translation>
     </message>
     <message>
         <source>MSI-EC GitHub:</source>
-        <translation type="unfinished"></translation>
+        <translation>MSI-EC GitHub:</translation>
     </message>
     <message>
         <source>This mode unlocks Advanced fan mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Ez a mód feloldja a haladó ventilátorvezérlést</translation>
     </message>
     <message>
         <source>High Performance</source>
-        <translation type="unfinished"></translation>
+        <translation>Nagy teljesítmény</translation>
     </message>
     <message>
         <source>Maximum performance at the cost of heat and increased power consumption</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximális teljesítmény, nagyobb hőtermelés és fogyasztás árán</translation>
+    </message>
+    <message>
+        <source>Follow system&apos;s power profile</source>
+        <translation>A rendszer energiaprofiljának követése</translation>
     </message>
     <message>
         <source>If you mainly use your laptop with the charger plugged most of the time, it is recommended to set the charge capacity at a lower percentage (60% or 80%) to prolong your battery lifecycle.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ha a laptopot többnyire töltőre dugva használod, érdemes alacsonyabb töltési határt (60% vagy 80%) beállítani, hogy tovább éljen az akkumulátor.</translation>
+    </message>
+    <message>
+        <source>Automatic Profile Switching</source>
+        <translation>Automatikus profilváltás</translation>
+    </message>
+    <message>
+        <source>On Charger:</source>
+        <translation>Töltőn:</translation>
+    </message>
+    <message>
+        <source>On Battery:</source>
+        <translation>Akkumulátorról:</translation>
     </message>
     <message>
         <source>Charge the battery when under 90%, stop at 100%</source>
-        <translation type="unfinished"></translation>
+        <translation>Töltés 90% alatt, leállás 100%-nál</translation>
+    </message>
+    <message>
+        <source>CPU Fan</source>
+        <translation>CPU ventilátor</translation>
+    </message>
+    <message>
+        <source>GPU Fan</source>
+        <translation>GPU ventilátor</translation>
     </message>
     <message>
         <source>Keyboard Backlight</source>
-        <translation type="unfinished"></translation>
+        <translation>Billentyűzet háttérvilágítás</translation>
     </message>
     <message>
         <source>-</source>
-        <translation type="unfinished"></translation>
+        <translation>-</translation>
     </message>
     <message>
         <source>MCC Bug Tracker:</source>
-        <translation type="unfinished"></translation>
+        <translation>MCC hibabejelentő:</translation>
     </message>
     <message>
         <source>Qt version:</source>
-        <translation type="unfinished"></translation>
+        <translation>Qt verzió:</translation>
     </message>
     <message>
         <source>MSI-EC Status:</source>
-        <translation type="unfinished"></translation>
+        <translation>MSI-EC állapota:</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Warning&lt;/span&gt;: Writing the wrong values to the wrong addresses &lt;span style=&quot; font-weight:700;&quot;&gt;WILL BRICK YOUR DEVICE!&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Never&lt;/span&gt; write to EC memory without knowing how to do a proper &lt;span style=&quot; font-weight:700;&quot;&gt;BIOS/EC&lt;/span&gt; reset, keep in mind that a reset &lt;span style=&quot; font-weight:700;&quot;&gt;might not&lt;/span&gt; fix the device if the device got bricked/broken. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Figyelem&lt;/span&gt;: ha rossz értéket írsz rossz címre, az &lt;span style=&quot; font-weight:700;&quot;&gt;TÖNKRETEHETI AZ ESZKÖZT!&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Soha&lt;/span&gt; ne írj az EC memóriába, ha nem tudod, hogyan kell szabályosan &lt;span style=&quot; font-weight:700;&quot;&gt;BIOS/EC&lt;/span&gt; resetet végezni, és ne feledd: egy reset &lt;span style=&quot; font-weight:700;&quot;&gt;nem mindig&lt;/span&gt; javítja meg a tönkrement eszközt. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>The msi-ec module is not loaded/installed.
 Check the &lt;About&gt; page for more info.</source>
-        <translation type="unfinished"></translation>
+        <translation>Az msi-ec modul nincs betöltve/telepítve.
+További információ a &lt;Névjegy&gt; oldalon.</translation>
     </message>
     <message>
         <source>The ec_sys module couldn&apos;t be detected, it might be required to control the fans.</source>
-        <translation type="unfinished"></translation>
+        <translation>Az ec_sys modul nem található; a ventilátorok vezérléséhez szükség lehet rá.</translation>
     </message>
     <message>
         <source>Loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>Betöltve</translation>
     </message>
     <message>
         <source>Fallback: Only ec_sys is loaded</source>
-        <translation type="unfinished"></translation>
+        <translation>Tartalék mód: csak az ec_sys van betöltve</translation>
     </message>
     <message>
         <source>Failed to load both msi-ec/ec_sys</source>
-        <translation type="unfinished"></translation>
+        <translation>Sem az msi-ec, sem az ec_sys nem tölthető be</translation>
     </message>
     <message>
         <source>OFF</source>
-        <translation type="unfinished"></translation>
+        <translation>KI</translation>
     </message>
 </context>
 </TS>

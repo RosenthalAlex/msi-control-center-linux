@@ -24,7 +24,7 @@
 
 MsiEcHelper::MsiEcHelper() {
     if (!QDBusConnection::systemBus().isConnected()) {
-        fprintf(stderr, "Cannot connect to the D-Bus system bus");
+        fprintf(stderr, "Cannot connect to the D-Bus system bus\n");
         return;
     }
     iface = new QDBusInterface(SERVICE_NAME, "/msi_ec", INTERFACE_NAME_MSI_EC, QDBusConnection::systemBus());
@@ -37,7 +37,7 @@ bool MsiEcHelper::isMsiEcModuleLoaded() {
 //////////////// webcam ////////////////
 
 bool MsiEcHelper::hasWebcam() const {
-    return getValue<bool>("hasWebcam", false);
+    return hasCached("hasWebcam");
 }
 
 bool MsiEcHelper::getWebcam() const {
@@ -51,7 +51,7 @@ void MsiEcHelper::setWebcam(bool enabled) const {
 //////////////// webcam_block ////////////////
 
 bool MsiEcHelper::hasWebcamBlock() const {
-    return getValue<bool>("hasWebcamBlock", false);
+    return hasCached("hasWebcamBlock");
 }
 
 bool MsiEcHelper::getWebcamBlock() const {
@@ -65,7 +65,7 @@ void MsiEcHelper::setWebcamBlock(bool enabled) const {
 //////////////// fn_win_swap ////////////////
 
 bool MsiEcHelper::hasFnWinSwap() const {
-    return getValue<bool>("hasFnWinSwap", false);
+    return hasCached("hasFnWinSwap");
 }
 
 bool MsiEcHelper::getFnWinSwap() const {
@@ -79,7 +79,7 @@ void MsiEcHelper::setFnWinSwap(bool swap) const {
 //////////////// cooler_boost ////////////////
 
 bool MsiEcHelper::hasCoolerBoost() const {
-    return getValue<bool>("hasCoolerBoost", false);
+    return hasCached("hasCoolerBoost");
 }
 
 bool MsiEcHelper::getCoolerBoost() const {
@@ -92,7 +92,7 @@ void MsiEcHelper::setCoolerBoost(bool enable) const {
 
 //////////////// shift_mode ////////////////
 bool MsiEcHelper::hasShiftMode() const {
-    return getValue<bool>("hasShiftMode", false);
+    return hasCached("hasShiftMode");
 }
 
 QList<shift_mode> MsiEcHelper::getAvailableShiftModes() const {
@@ -149,7 +149,7 @@ void MsiEcHelper::setShiftMode(shift_mode mode) const {
 //////////////// super_battery ////////////////
 
 bool MsiEcHelper::hasSuperBattery() const {
-    return getValue<bool>("hasSuperBattery", false);
+    return hasCached("hasSuperBattery");
 }
 
 bool MsiEcHelper::getSuperBattery() const {
@@ -163,7 +163,7 @@ void MsiEcHelper::setSuperBattery(bool enable) const {
 //////////////// fan_mode ////////////////
 
 bool MsiEcHelper::hasFanMode() const {
-    return getValue<bool>("hasFanMode", false);
+    return hasCached("hasFanMode");
 }
 
 QList<fan_mode> MsiEcHelper::getAvailableFanModes() const {
@@ -233,7 +233,7 @@ QString MsiEcHelper::getFWReleaseDate() const {
 
 // cpu/realtime_temperature 0-100 (celsius scale)
 bool MsiEcHelper::hasCPURealtimeTemperature() const {
-    return getValue<bool>("hasCPURealtimeTemperature", false);
+    return hasCached("hasCPURealtimeTemperature");
 }
 
 int MsiEcHelper::getCPURealtimeTemperature() const {
@@ -242,7 +242,7 @@ int MsiEcHelper::getCPURealtimeTemperature() const {
 
 // cpu/realtime_fan_speed 0-100 (percent)
 bool MsiEcHelper::hasCPURealtimeFanSpeed() const {
-    return getValue<bool>("hasCPURealtimeFanSpeed", false);
+    return hasCached("hasCPURealtimeFanSpeed");
 }
 
 int MsiEcHelper::getCPURealtimeFanSpeed() const {
@@ -251,7 +251,7 @@ int MsiEcHelper::getCPURealtimeFanSpeed() const {
 
 // cpu/basic_fan_speed 0-100 (percent)
 bool MsiEcHelper::hasCPUBasicFanSpeed() const {
-    return getValue<bool>("hasCPUBasicFanSpeed", false);
+    return hasCached("hasCPUBasicFanSpeed");
 }
 
 int MsiEcHelper::getCPUBasicFanSpeed() const {
@@ -266,7 +266,7 @@ void MsiEcHelper::setCPUBasicFanSpeed(int value) const {
 
 // gpu/realtime_temperature 0-100 (celsius scale)
 bool MsiEcHelper::hasGPURealtimeTemperature() const {
-    return getValue<bool>("hasGPURealtimeTemperature", false);
+    return hasCached("hasGPURealtimeTemperature");
 }
 
 std::optional<int> MsiEcHelper::getGPURealtimeTemperature() const {
@@ -275,7 +275,7 @@ std::optional<int> MsiEcHelper::getGPURealtimeTemperature() const {
 
 // gpu/realtime_fan_speed 0-100 (percent)
 bool MsiEcHelper::hasGPURealtimeFanSpeed() const {
-    return getValue<bool>("hasGPURealtimeFanSpeed", false);
+    return hasCached("hasGPURealtimeFanSpeed");
 }
 
 std::optional<int> MsiEcHelper::getGPURealtimeFanSpeed() const {
@@ -286,7 +286,7 @@ std::optional<int> MsiEcHelper::getGPURealtimeFanSpeed() const {
 
 // BAT1/charge_control_start_threshold 0-100 (percent)
 bool MsiEcHelper::hasBatteryStartThreshold() const {
-    return getValue<bool>("hasBatteryStartThreshold", false);
+    return hasCached("hasBatteryStartThreshold");
 }
 
 int MsiEcHelper::getBatteryStartThreshold() const {
@@ -299,7 +299,7 @@ void MsiEcHelper::setBatteryStartThreshold(int value) const {
 
 // BAT1/charge_control_end_threshold 0-100 (percent)
 bool MsiEcHelper::hasBatteryEndThreshold() const {
-    return getValue<bool>("hasBatteryEndThreshold", false);
+    return hasCached("hasBatteryEndThreshold");
 }
 
 int MsiEcHelper::getBatteryEndThreshold() const {
@@ -312,7 +312,7 @@ void MsiEcHelper::setBatteryEndThreshold(int value) const {
 
 // BAT1/capacity 0-100 (percent)
 bool MsiEcHelper::hasBatteryCapacity() const {
-    return getValue<bool>("hasBatteryCapacity", false);
+    return hasCached("hasBatteryCapacity");
 }
 
 int MsiEcHelper::getBatteryCapacity() const {
@@ -321,7 +321,7 @@ int MsiEcHelper::getBatteryCapacity() const {
 
 // BAT1/status
 bool MsiEcHelper::hasBatteryStatus() const {
-    return getValue<bool>("hasBatteryStatus", false);
+    return hasCached("hasBatteryStatus");
 }
 
 QString MsiEcHelper::getBatteryStatus() const {
@@ -332,7 +332,7 @@ QString MsiEcHelper::getBatteryStatus() const {
 
 // kbd_backlight/brightness 0-3
 bool MsiEcHelper::hasKeyboardBacklightBrightness() const {
-    return getValue<bool>("hasKeyboardBacklightBrightness", false);
+    return hasCached("hasKeyboardBacklightBrightness");
 }
 
 int MsiEcHelper::getKeyboardBacklightBrightness() const {
@@ -350,8 +350,20 @@ void MsiEcHelper::printError(QDBusError const &error) const {
         fprintf(stderr, "Call failed: %s\n", qPrintable(error.message()));
 }
 
+bool MsiEcHelper::hasCached(const QString &method) const {
+    if (auto it = capabilityCache.constFind(method); it != capabilityCache.constEnd())
+        return it.value();
+    auto value = getOptionalValue<bool>(method);
+    // Do not cache a failed call (e.g. helper not running yet)
+    if (value.has_value())
+        capabilityCache.insert(method, value.value());
+    return value.value_or(false);
+}
+
 template <typename T>
 inline std::optional<T> MsiEcHelper::getOptionalValue(QString method) const {
+    if (!iface)
+        return std::nullopt;
     if (QDBusReply<T> reply = iface->call(method); reply.isValid())
         return reply.value();
     printError(iface->lastError());
@@ -365,6 +377,8 @@ inline T MsiEcHelper::getValue(QString method, T defaultValue) const {
 
 template <typename T>
 void MsiEcHelper::setValue(QString method, T value) const {
+    if (!iface)
+        return;
     iface->call(method, value);
     printError(iface->lastError());
 }

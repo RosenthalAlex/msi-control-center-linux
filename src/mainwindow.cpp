@@ -19,7 +19,9 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "operate.h"
+#include "keyboard_rgb_widget.h"
 #include "settings.h"
+#include "sysinfo.h"
 #include <QTimer>
 #include <QMessageBox>
 
@@ -151,7 +153,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->tabWidget->tabBar()->setExpanding(true);
     // Disable debug tab
-    ui->tabWidget->setTabVisible(5, false);
+    ui->tabWidget->setTabVisible(ui->tabWidget->indexOf(ui->debugTab), false);
+    createExtraWidgets();
     setTabsEnabled(false);
 
     if (!operate.isMsiEcLoaded()) {
@@ -239,6 +242,7 @@ void MainWindow::updateData() {
         updateFan2Speed();
         updateKeyboardBrightness();
         updateWebCamState();
+        updateSystemInfo();
 
         if (operate.isMsiEcLoaded()) {
             ui->MsiEcStatusLabel->setText(tr("Loaded"));
@@ -280,7 +284,9 @@ void MainWindow::loadConfigs() {
         updateKeyboardBrightness();
     } else {
         ui->keyboardBrightnessSlider->setEnabled(false);
-        ui->tabWidget->removeTab(3);
+        // Keep the tab if the EC still offers the backlight timeout setting
+        if (!operate.isKeyboardBacklightModeSupport())
+            ui->tabWidget->removeTab(ui->tabWidget->indexOf(ui->keyboardTab));
     }
 
     if (operate.isUsbPowerShareSupport()) {
@@ -402,6 +408,93 @@ void MainWindow::updateFan2Speed() {
         ui->gpuFanLabel->setVisible(false);
         ui->fanControlTabWidget->setTabEnabled(1, false);
     }
+}
+
+void MainWindow::createExtraWidgets() {
+    // Overview: discrete GPU power state and battery power
+    const int row = ui->gridLayout_8->rowCount();
+    dGpuLabel = new QLabel(tr("dGPU:"), this);
+    dGpuValueLabel = new QLabel("-", this);
+    dGpuValueLabel->setToolTip(tr("Power state of the discrete graphics card. "
+                                  "\"Sleeping\" saves battery."));
+    powerLabel = new QLabel(tr("Power:"), this);
+    powerValueLabel = new QLabel("-", this);
+    ui->gridLayout_8->addWidget(dGpuLabel, row, 1);
+    ui->gridLayout_8->addWidget(dGpuValueLabel, row, 2);
+    ui->gridLayout_8->addWidget(powerLabel, row + 1, 1);
+    ui->gridLayout_8->addWidget(powerValueLabel, row + 1, 2);
+
+    // Battery tab: health information
+    auto *healthBox = new QGroupBox(tr("Battery health"), ui->batteryTab);
+    auto *healthForm = new QFormLayout(healthBox);
+    batteryHealthValueLabel = new QLabel("-", healthBox);
+    batteryCapacityValueLabel = new QLabel("-", healthBox);
+    batteryCyclesValueLabel = new QLabel("-", healthBox);
+    batteryModelValueLabel = new QLabel("-", healthBox);
+    healthForm->addRow(tr("Health:"), batteryHealthValueLabel);
+    healthForm->addRow(tr("Capacity:"), batteryCapacityValueLabel);
+    healthForm->addRow(tr("Charge cycles:"), batteryCyclesValueLabel);
+    healthForm->addRow(tr("Battery:"), batteryModelValueLabel);
+    ui->gridLayout_15->removeItem(ui->verticalSpacer_4);
+    ui->gridLayout_15->addWidget(healthBox, 4, 0);
+    ui->gridLayout_15->addItem(ui->verticalSpacer_4, 5, 0);
+
+    // RGB keyboard (separate USB controller, not part of the EC)
+    keyboardRgbWidget = new KeyboardRgbWidget(this);
+    if (keyboardRgbWidget->isAvailable()) {
+        auto *scroll = new QScrollArea(this);
+        scroll->setWidgetResizable(true);
+        scroll->setFrameShape(QFrame::NoFrame);
+        scroll->setWidget(keyboardRgbWidget);
+        ui->tabWidget->insertTab(ui->tabWidget->indexOf(ui->keyboardTab) + 1, scroll, tr("RGB Lighting"));
+        keyboardRgbWidget->restore();
+    } else {
+        delete keyboardRgbWidget;
+        keyboardRgbWidget = nullptr;
+    }
+}
+
+void MainWindow::updateSystemInfo() {
+    if (auto gpu = SysInfo::discreteGpu()) {
+        QString state;
+        if (gpu->runtimeStatus == "active")
+            state = tr("Active");
+        else if (gpu->runtimeStatus == "suspended")
+            state = tr("Sleeping");
+        else
+            state = gpu->runtimeStatus;
+        if (gpu->isPrimary)
+            state += " " + tr("(discrete GPU only mode)");
+        dGpuValueLabel->setText(state);
+        dGpuValueLabel->setToolTip(gpu->name);
+        dGpuLabel->setVisible(true);
+        dGpuValueLabel->setVisible(true);
+    } else {
+        dGpuLabel->setVisible(false);
+        dGpuValueLabel->setVisible(false);
+    }
+
+    const SysInfo::BatteryInfo bat = SysInfo::battery();
+    if (bat.powerWatts && *bat.powerWatts > 0.05) {
+        QString text = QString("%1 W").arg(*bat.powerWatts, 0, 'f', 1);
+        if (bat.status == "Discharging")
+            text += " " + tr("(from battery)");
+        else if (bat.status == "Charging")
+            text += " " + tr("(charging)");
+        powerValueLabel->setText(text);
+    }
+    else
+        powerValueLabel->setText("-");
+
+    if (!bat.present)
+        return;
+    batteryHealthValueLabel->setText(bat.healthPercent ? QString("%1 %").arg(*bat.healthPercent) : "-");
+    if (bat.fullWh && bat.designWh)
+        batteryCapacityValueLabel->setText(tr("%1 Wh of %2 Wh (design)")
+                                           .arg(*bat.fullWh, 0, 'f', 1).arg(*bat.designWh, 0, 'f', 1));
+    batteryCyclesValueLabel->setText(bat.cycleCount ? QString::number(*bat.cycleCount) : tr("Not reported"));
+    QString model = QStringList{bat.manufacturer, bat.model}.join(' ').trimmed();
+    batteryModelValueLabel->setText(model.isEmpty() ? bat.name : model);
 }
 
 void MainWindow::updateKeyboardBacklightMode() {
@@ -652,6 +745,7 @@ void MainWindow::checkFanSettingsChanged() const {
 }
 
 void MainWindow::showEvent(QShowEvent *event) {
+    QMainWindow::showEvent(event);
     startRealtimeUpdate();
     activateWindow();
 }
@@ -684,6 +778,8 @@ void MainWindow::timerSleepTimeout() {
     if (msecsSinceTimeout > timerSleepWatcher.interval() + 5000) {
         // Went to sleep for at least 5 seconds
         operate.handleWakeEvent();
+        if (keyboardRgbWidget)
+            keyboardRgbWidget->restore();
     }
 }
 

@@ -20,6 +20,8 @@ MControlCenter is a Free and Open Source GNU/Linux application that allows you t
  - Change the maximum battery level limit
  - Advanced Fan Speed Control (Since version 0.4)
  - Change other settings such as keyboard backlight mode, USB Power Share, etc.
+ - RGB keyboard lighting for the MSI Mystic Light MS-1565 controller (Since version 0.6)
+ - Real fan RPM, battery health, dGPU power state and power draw (Since version 0.6)
 
 ## TODO
 
@@ -130,7 +132,11 @@ Enable and start the `nvidia-powerd` service:
 Laptops with **AMD** dGPUs (usually AMD Advantage models) don't need any steps, as power limits and smartshift functionality work correctly with each performance mode.
 
 ### Laptops with RGB keyboards
-Try using [OpenRGB](https://openrgb.org/), and make sure you're using the latest version if your distribution ships old versions.
+4-zone RGB keyboards that use the **MSI Mystic Light MS-1565** controller (USB ID `1462:1601`, check with `lsusb`),
+for example the Katana 15 HX / 17 HX, are supported directly in the **RGB Lighting** tab.
+The packet format comes from [OpenRGB](https://openrgb.org/)'s `MSIKeyboard1565Controller`.
+
+For other RGB keyboards, try [OpenRGB](https://openrgb.org/), and make sure you're using the latest version if your distribution ships old versions.
 
 Regular laptops with only 1 color can be controlled directly by the app. However, RGB keyboards are wired over USB, thats why openRGB is needed.
 
@@ -140,6 +146,44 @@ For laptops with a dGPU **AND** a mux switch, there is a workaround for switchin
 Install [supergfxctl](https://gitlab.com/asus-linux/supergfxctl) and couple it with a widget like [supergfxctl-plasmoid](https://gitlab.com/Jhyub/supergfxctl-plasmoid) for KDE, or [supergfxctl-gex](https://extensions.gnome.org/extension/5344/supergfxctl-gex/) for GNOME.
 
 ## Building from source
+
+### Arch Linux / CachyOS
+
+```
+sudo pacman -S --needed base-devel cmake ninja qt6-base qt6-tools
+cd packaging/arch
+makepkg -si
+```
+
+### Any distribution (CMake)
+
+```
+cmake -S . -B build -G Ninja -DCMAKE_INSTALL_PREFIX=/usr
+cmake --build build
+sudo cmake --install build
+```
+
+Translations are built when Qt LinguistTools (`qt6-tools`) is installed; without it the app is built in English only.
+
+After installing, reboot once (or run `sudo systemctl reload dbus` and `sudo modprobe ec_sys write_support=1`)
+so the D-Bus helper, its polkit rule and `ec_sys` are picked up.
+
+### Permissions
+
+The GUI runs as your user. Hardware changes go through a small root helper (`mcontrolcenter-helper`)
+that is started on demand by D-Bus. Each write is checked with polkit
+(action `io.github.mcontrolcenter.control`): the active local session is allowed without a password,
+other sessions must authenticate as an administrator.
+
+### Raw EC features on msi-ec systems
+
+Keyboard backlight mode and USB Power Share are written straight into EC memory at fixed addresses.
+When the msi-ec driver is loaded these features are hidden, because on newer firmware the same
+addresses control other things (on the Katana 15 HX, `0x2C` is the mic-mute LED). If you know that
+your model uses these addresses, add `allowRawEcFeatures=true` under `[Settings]` in
+`~/.config/MControlCenter.conf`.
+
+### Using the original build scripts
 
 After installing the main package (`qt6-base` or `libqt6widgets6`), you'll need to install other packages to build the app.
 

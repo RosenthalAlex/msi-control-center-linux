@@ -17,7 +17,6 @@
  */
 
 #include <QSettings>
-#include <sstream>
 #include "settings.h"
 
 QSettings settings("MControlCenter");
@@ -28,11 +27,13 @@ QVariant Settings::getValue(const QString &key) {
 
 QVector<int> Settings::getValueVector(const QString &key) {
     QVector<int> value;
-    std::stringstream string_stream(settings.value(key).toString().toStdString());
-    while (string_stream.good()) {
-        std::string a;
-        getline(string_stream, a, '|');
-        value.append(std::stoi(a));
+    const QStringList parts = settings.value(key).toString().split('|', Qt::SkipEmptyParts);
+    for (const QString &part : parts) {
+        bool ok = false;
+        const int v = part.toInt(&ok);
+        if (!ok)
+            return {}; // corrupt entry: callers check the size
+        value.append(v);
     }
     return value;
 }

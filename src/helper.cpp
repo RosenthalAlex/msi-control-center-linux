@@ -31,13 +31,15 @@ QByteArray ecData;
 
 Helper::Helper() {
     if (!QDBusConnection::systemBus().isConnected()) {
-        fprintf(stderr, "Cannot connect to the D-Bus system bus");
+        fprintf(stderr, "Cannot connect to the D-Bus system bus\n");
         return;
     }
     iface = new QDBusInterface(SERVICE_NAME, "/", INTERFACE_NAME, QDBusConnection::systemBus());
 }
 
 bool Helper::isEcSysModuleLoaded() {
+    if (!iface)
+        return false;
     if (QDBusReply<bool> reply = iface->call("isEcSysModuleLoaded"); reply.isValid())
         return reply.value();
     printError(iface->lastError());
@@ -45,6 +47,8 @@ bool Helper::isEcSysModuleLoaded() {
 }
 
 bool Helper::loadEcSysModule() {
+    if (!iface)
+        return false;
     if (QDBusReply<bool> reply = iface->call("loadEcSysModule"); reply.isValid())
         return reply.value();
     printError(iface->lastError());
@@ -52,6 +56,8 @@ bool Helper::loadEcSysModule() {
 }
 
 bool Helper::updateData() {
+    if (!iface)
+        return false;
     if (QDBusReply<QByteArray> reply = iface->call("getData"); reply.isValid() &&
                                                                reply.value().size() == EC_SPACE_SIZE) {
         ecData = reply.value();
@@ -62,10 +68,12 @@ bool Helper::updateData() {
 }
 
 void Helper::updateDataAsync() {
+    if (!iface)
+        return;
     QDBusPendingCall async = iface->asyncCall("getData");
-    QDBusPendingCallWatcher const *watcher = new QDBusPendingCallWatcher(async, this);
+    auto *watcher = new QDBusPendingCallWatcher(async, this);
 
-    QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),this, SLOT(callFinishedSlot(QDBusPendingCallWatcher*)));
+    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, &Helper::callFinishedSlot);
 }
 
 void Helper::callFinishedSlot(QDBusPendingCallWatcher *call) {
@@ -81,8 +89,8 @@ void Helper::callFinishedSlot(QDBusPendingCallWatcher *call) {
 }
 
 std::optional<int> Helper::getOptionalValue(int address) const {
-    if (!ecData.isEmpty())
-        return (BYTE) ecData[address];
+    if (address >= 0 && address < ecData.size())
+        return static_cast<BYTE>(ecData[address]);
     return std::nullopt;
 }
 
@@ -95,6 +103,8 @@ QByteArray Helper::getValues(int startAddress, int size) const {
 }
 
 void Helper::putValue(int address, int value) {
+    if (!iface)
+        return;
     if (getValue(address) == value)
         return;
     iface->call("putValue", address, value);
@@ -102,6 +112,8 @@ void Helper::putValue(int address, int value) {
 }
 
 void Helper::quit() {
+    if (!iface)
+        return;
     iface->call("quit");
     printError(iface->lastError());
 }

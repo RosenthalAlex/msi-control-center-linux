@@ -4,6 +4,34 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## [0.6.0] 2026-10-23
+### Added
+- RGB keyboard lighting for the MSI Mystic Light MS-1565 controller (USB 1462:1601, Katana 15/17 HX):
+  off, static, breathing, color cycle and rainbow wave; per-zone colors (4 zones), brightness,
+  speed, wave direction, color presets, restore on start/after sleep, save to keyboard memory
+- Real fan speeds (RPM) from the `msi_wmi_platform` driver on newer models
+- Battery health: health %, full/design capacity, charge cycles, battery model
+- Discrete GPU power state (active/sleeping, discrete-only MUX mode) and battery power draw on the overview page
+- polkit authorization for every write call to the root helper (`io.github.mcontrolcenter.control`,
+  allowed without a password for the active local session)
+- `cmake --install` support (GNUInstallDirs), Arch Linux / CachyOS `PKGBUILD`, AppStream metainfo,
+  modprobe config that enables `ec_sys` write support
+- Complete Hungarian translation
+
+### Changed
+- Raw EC writes for keyboard backlight mode and USB power share are disabled on msi-ec systems,
+  because their fixed EC addresses can belong to other functions (on Katana 15 HX, 0x2C is the
+  mic-mute LED). Set `Settings/allowRawEcFeatures=true` in `~/.config/MControlCenter.conf` to re-enable.
+- Feature support is queried once instead of on every refresh (far fewer D-Bus calls)
+- Translations are optional at build time (Qt LinguistTools no longer required)
+- Tabs are addressed by widget instead of by index
+
+### Fixed
+- Crash when a sysfs file is empty or unreadable in the helper
+- Crash on corrupt fan curve values in the settings file
+- Out-of-range EC addresses (e.g. -1 for undetected features) could be passed to the helper
+- `modprobe` is found on distributions without `/usr/sbin`; the `QProcess` used for it leaked
+
 ## [0.4.1] 2023-08-09
 - Fixed UI lags when resizing the window (issue https://github.com/dmitry-s93/MControlCenter/issues/97)
 - Updated Norwegian Bokmål (Thanks [msigurdsen](https://github.com/msigurdsen))

@@ -21,6 +21,7 @@
 
 #include "operate.h"
 #include <QtCore/QObject>
+#include <QtCore/QHash>
 #include <QtDBus/QDBusInterface>
 
 class MsiEcHelper : public QObject {
@@ -114,7 +115,10 @@ public:
     Q_NOREPLY void setKeyboardBacklightBrightness(int value) const;
 
 private:
-    QDBusInterface *iface;
+    QDBusInterface *iface = nullptr;
+    // Feature support does not change while the app runs, so ask only once.
+    mutable QHash<QString, bool> capabilityCache;
+    [[nodiscard]] bool hasCached(const QString &method) const;
     void printError(QDBusError const &error) const;
 
     template <typename T>

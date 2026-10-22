@@ -20,6 +20,7 @@
 #include "helper.h"
 #include "msi-ec_helper.h"
 #include "settings.h"
+#include "sysinfo.h"
 
 Helper helper;
 MsiEcHelper msiEcHelper;
@@ -170,9 +171,14 @@ std::optional<int> Operate::getGpuTemp() const {
 }
 
 int Operate::getFan1Speed() const {
+    // Newer models report the real RPM through the msi_wmi_platform driver.
+    if (auto rpm = SysInfo::fanRpm(1))
+        return rpm.value();
     // Read 2 bytes (big-endian)
     int value0 = helper.getValue(fan1Address);
     int value1 = helper.getValue(fan1Address - 1);
+    if (value0 < 0 || value1 < 0)
+        return -1;
     int value = (value1 << 8) | value0;
     if (value > 0)
         return 480000 / value;
@@ -182,6 +188,8 @@ int Operate::getFan1Speed() const {
 std::optional<int> Operate::getFan2Speed() const {
     if (msiEcHelper.isMsiEcModuleLoaded() && !msiEcHelper.hasGPURealtimeFanSpeed())
         return std::nullopt;
+    if (auto rpm = SysInfo::fanRpm(2))
+        return rpm;
     // Read 2 bytes (big-endian)
     auto value0 = helper.getOptionalValue(fan2Address);
     auto value1 = helper.getOptionalValue(fan2Address - 1);
@@ -326,6 +334,8 @@ void Operate::setBatteryThreshold(int value) const {
 }
 
 void Operate::setKeyboardBacklightMode(int value) const {
+    if (!isKeyboardBacklightModeSupport())
+        return;
     int resValue = keyboardBacklightAlwaysOn;
     if (value == 1)
         resValue = keyboardBacklightAutoTurnOff;
@@ -335,6 +345,8 @@ void Operate::setKeyboardBacklightMode(int value) const {
 void Operate::setKeyboardBrightness(int value) const {
     if (msiEcHelper.hasKeyboardBacklightBrightness())
         return msiEcHelper.setKeyboardBacklightBrightness(value);
+    if (keyboardBacklightAddress < 0 || !rawEcFeaturesAllowed())
+        return;
     int resValue;
     switch (value) {
         case 0:
@@ -356,6 +368,8 @@ void Operate::setKeyboardBrightness(int value) const {
 }
 
 void Operate::setUsbPowerShareState(bool enabled) const {
+    if (!isUsbPowerShareSupport())
+        return;
     int value = enabled ? usbPowerShareOn : usbPowerShareOff;
     helper.putValue(usbPowerShareAddress, value);
     Settings::setValue(settingsGroup + "UsbPowerShare", enabled);
@@ -491,7 +505,20 @@ bool Operate::isBatteryThresholdSupport() const {
     return msiEcHelper.hasBatteryEndThreshold() || batteryThresholdAddress != 0;
 }
 
+bool Operate::rawEcFeaturesAllowed() const {
+    // Features below are written straight into EC memory at fixed addresses.
+    // msi-ec knows the layout of each firmware and does not offer them, so on
+    // msi-ec systems the addresses may belong to something else (e.g. 0x2C is
+    // the mic-mute LED on Katana 15 HX). Only use them when asked to.
+    if (!msiEcHelper.isMsiEcModuleLoaded())
+        return true;
+    Settings s;
+    return s.getValue(settingsGroup + "allowRawEcFeatures").toBool();
+}
+
 bool Operate::isKeyboardBacklightModeSupport() const {
+    if (!rawEcFeaturesAllowed() || keyboardBacklightAddress < 0)
+        return false;
     // Backlight mode is not available for all keyboard with backlight
     
     // Keep the same behaviour for devices with brightness at 0xD3
@@ -509,6 +536,8 @@ bool Operate::isKeyboardBacklightSupport() const {
 }
 
 bool Operate::isUsbPowerShareSupport() const {
+    if (!rawEcFeaturesAllowed())
+        return false;
     return (helper.getValue(usbPowerShareAddress) == usbPowerShareOff ||
             helper.getValue(usbPowerShareAddress) == usbPowerShareOn);
 }
