@@ -1,0 +1,11 @@
+# Installed by MControlCenter.
+#
+# The touchpad key on MSI Katana HX laptops sends the Windows combo
+# Ctrl + Super + F24 (scancode 0x76), which desktops ignore. Map it to F21
+# (XF86TouchpadToggle): GNOME and KDE bind <Ctrl><Super>XF86TouchpadToggle
+# to "toggle touchpad" and show their on-screen indicator.
+# Same fix as the GS66 / GE76 entries in systemd's 60-keyboard.hwdb.
+
+# Katana 15 HX / 17 HX (e.g. B14WFK, B14WGK, B14WEK)
+evdev:atkbd:dmi:bvn*:bvr*:bd*:svnMicro-Star*:pnKatana*HX*:*
+ KEYBOARD_KEY_76=f21

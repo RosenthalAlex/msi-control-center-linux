@@ -20,7 +20,7 @@ strip --strip-unneeded $APP_DIR/mcontrolcenter-helper
 
 cp ../src/helper/mcontrolcenter-helper.conf ../src/helper/io.github.mcontrolcenter.policy $APP_DIR
 cp ../build/helper/mcontrolcenter.helper.service $APP_DIR
-cp ../resources/mcontrolcenter-ec_sys.conf $APP_DIR
+cp ../resources/mcontrolcenter-ec_sys.conf ../resources/udev/61-mcontrolcenter-msi-keyboard.hwdb $APP_DIR
 cp ../resources/mcontrolcenter.desktop ../resources/mcontrolcenter.svg $APP_DIR
 
 cp ./install.sh ./uninstall.sh $DIST_DIR

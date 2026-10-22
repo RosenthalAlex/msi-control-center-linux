@@ -9,6 +9,7 @@ DBUS_SYSTEM_PATH='/usr/share/dbus-1/system.d/'
 DBUS_SERVICES_PATH='/usr/share/dbus-1/system-services/'
 POLKIT_ACTIONS_PATH='/usr/share/polkit-1/actions/'
 MODPROBE_PATH='/usr/lib/modprobe.d/'
+HWDB_PATH='/usr/lib/udev/hwdb.d/'
 
 APP_DIR='./app/'
 
@@ -26,5 +27,8 @@ install -vDm644 ${APP_DIR}mcontrolcenter-helper.conf ${DBUS_SYSTEM_PATH}mcontrol
 install -vDm644 ${APP_DIR}mcontrolcenter.helper.service ${DBUS_SERVICES_PATH}mcontrolcenter.helper.service
 install -vDm644 ${APP_DIR}io.github.mcontrolcenter.policy ${POLKIT_ACTIONS_PATH}io.github.mcontrolcenter.policy
 install -vDm644 ${APP_DIR}mcontrolcenter-ec_sys.conf ${MODPROBE_PATH}mcontrolcenter.conf
+
+install -vDm644 ${APP_DIR}61-mcontrolcenter-msi-keyboard.hwdb ${HWDB_PATH}61-mcontrolcenter-msi-keyboard.hwdb
+systemd-hwdb update && udevadm trigger --subsystem-match=input --action=change || true
 
 echo "Installation was successful"
