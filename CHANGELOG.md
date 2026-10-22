@@ -17,6 +17,9 @@ All notable changes to this project will be documented in this file.
 - `cmake --install` support (GNUInstallDirs), Arch Linux / CachyOS `PKGBUILD`, AppStream metainfo,
   modprobe config that enables `ec_sys` write support
 - Complete Hungarian translation
+- Touchpad on/off key works on Katana 15/17 HX (udev hwdb maps its Ctrl+Super+F24 to the touchpad toggle key)
+- "Start automatically at login" option; launching the app again raises the running window
+- Charge limit is re-applied at start
 
 ### Changed
 - Raw EC writes for keyboard backlight mode and USB power share are disabled on msi-ec systems,

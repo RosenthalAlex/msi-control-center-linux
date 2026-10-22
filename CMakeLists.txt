@@ -86,3 +86,6 @@ install(FILES resources/mcontrolcenter.appdata.xml
 install(FILES resources/mcontrolcenter-ec_sys.conf
         DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/modprobe.d
         RENAME mcontrolcenter.conf)
+# Makes the touchpad key work on MSI Katana HX laptops
+install(FILES resources/udev/61-mcontrolcenter-msi-keyboard.hwdb
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/udev/hwdb.d)

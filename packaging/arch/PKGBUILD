@@ -2,7 +2,7 @@
 #   cd packaging/arch && makepkg -si
 pkgname=mcontrolcenter-katana
 pkgver=0.6.0
-pkgrel=3
+pkgrel=4
 pkgdesc="Control center for MSI laptops: performance modes, fan curves, battery limit, RGB keyboard"
 arch=('x86_64')
 url="https://github.com/dmitry-s93/MControlCenter"
@@ -14,6 +14,7 @@ optdepends=('upower: automatic mode switching on charger/battery'
             'msi-ec-dkms-git: newer msi-ec driver than the one in the kernel')
 provides=('mcontrolcenter')
 conflicts=('mcontrolcenter' 'mcontrolcenter-bin' 'mcontrolcenter-git')
+install=mcontrolcenter.install
 
 _srcroot="$(realpath "${startdir}/../..")"
 

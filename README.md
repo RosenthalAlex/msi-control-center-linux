@@ -140,6 +140,13 @@ For other RGB keyboards, try [OpenRGB](https://openrgb.org/), and make sure you'
 
 Regular laptops with only 1 color can be controlled directly by the app. However, RGB keyboards are wired over USB, thats why openRGB is needed.
 
+### Touchpad key on Katana HX
+
+The touchpad on/off key sends Ctrl + Super + F24, which desktops ignore. MControlCenter installs
+`/usr/lib/udev/hwdb.d/61-mcontrolcenter-msi-keyboard.hwdb`, which turns it into the standard touchpad
+toggle key, so GNOME/KDE switch the touchpad and show their indicator. After installing by hand, run
+`sudo systemd-hwdb update && sudo udevadm trigger --subsystem-match=input --action=change`.
+
 ### MUX switching
 
 For laptops with a dGPU **AND** a mux switch, there is a workaround for switching modes:

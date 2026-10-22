@@ -14,5 +14,7 @@ rm -fv /usr/share/dbus-1/system.d/mcontrolcenter-helper.conf
 rm -fv /usr/share/dbus-1/system-services/mcontrolcenter.helper.service
 rm -fv /usr/share/polkit-1/actions/io.github.mcontrolcenter.policy
 rm -fv /usr/lib/modprobe.d/mcontrolcenter.conf
+rm -fv /usr/lib/udev/hwdb.d/61-mcontrolcenter-msi-keyboard.hwdb
+systemd-hwdb update || true
 
 echo "Uninstall was successful"

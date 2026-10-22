@@ -1,0 +1,19 @@
+_reload_keyboard() {
+    # Apply the touchpad-key mapping without a reboot
+    systemd-hwdb update >/dev/null 2>&1
+    udevadm trigger --subsystem-match=input --action=change >/dev/null 2>&1
+    return 0
+}
+
+post_install() {
+    _reload_keyboard
+    echo ">> Reboot once (or run: sudo modprobe ec_sys write_support=1) to enable fan curves."
+}
+
+post_upgrade() {
+    _reload_keyboard
+}
+
+post_remove() {
+    _reload_keyboard
+}
