@@ -102,7 +102,13 @@ public:
     void setFan1TempSettings(QVector<int> value) const;
     void setFan2TempSettings(QVector<int> value) const;
     void setFanMode(int value) const;
-    void setFanModeAdvanced(bool enabled) const;
+    /// remember = store as the user's choice (false for automatic re-applies)
+    void setFanModeAdvanced(bool enabled, bool remember = true) const;
+    [[nodiscard]] bool isCustomFanCurveWanted() const;
+    /// Writes the saved fan curve and switches to advanced fan mode, if the user wants it.
+    void applyCustomFanCurveIfWanted() const;
+    /// Re-applies the custom curve if something switched the fan mode away. Returns true if it did.
+    bool ensureCustomFanCurve() const;
 
     [[nodiscard]] int getValue(int address) const;
     void setValue(int address, int value) const;

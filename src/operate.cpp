@@ -295,8 +295,13 @@ user_mode Operate::getUserMode() const {
                 fan_mode fanMode = getFanMode();
                 if (fanMode == fan_mode::silent_fan_mode)
                     return user_mode::silent_mode;
-                else
-                    return user_mode::balanced_mode;
+                // With a custom fan curve, Silent and Balanced look the same to the EC.
+                if (fanMode == fan_mode::advanced_fan_mode) {
+                    Settings s;
+                    if (s.getValue(settingsGroup + "UserMode").toString() == "silent_mode")
+                        return user_mode::silent_mode;
+                }
+                return user_mode::balanced_mode;
             }
             case shift_mode::sport_mode: // ?
                 return user_mode::balanced_mode;
@@ -441,6 +446,9 @@ void Operate::setUserMode(user_mode userMode) const {
     }
 
     Settings::setValue(settingsGroup + "UserMode", userModeStr);
+
+    // Changing the mode resets the fan mode; keep the user's custom curve.
+    applyCustomFanCurveIfWanted();
 }
 
 void Operate::setFan1SpeedSettings(QVector<int> value) const {
@@ -485,12 +493,57 @@ void Operate::setFanMode(int value) const {
     helper.putValue(fanModeAddress, value);
 }
 
-void Operate::setFanModeAdvanced(bool enabled) const {
-    if (enabled)
-        helper.putValue(fanModeAddress, fanModeAdvanced);
-    else
-        helper.putValue(fanModeAddress, fanModeAuto);
-    Settings::setValue(settingsGroup + "fanModeAdvanced", enabled);
+void Operate::setFanModeAdvanced(bool enabled, bool remember) const {
+    if (remember)
+        Settings::setValue(settingsGroup + "fanModeAdvanced", enabled);
+
+    fan_mode target = fan_mode::advanced_fan_mode;
+    if (!enabled) {
+        // Go back to the fan mode that belongs to the selected user mode.
+        Settings s;
+        target = s.getValue(settingsGroup + "UserMode").toString() == "silent_mode"
+                         ? fan_mode::silent_fan_mode : fan_mode::auto_fan_mode;
+    }
+
+    if (msiEcHelper.hasFanMode()) {
+        msiEcHelper.setFanMode(target);
+        return;
+    }
+    helper.updateData(); // putValue skips writes that match the cached EC data
+    helper.putValue(fanModeAddress, target == fan_mode::advanced_fan_mode ? fanModeAdvanced
+                                    : target == fan_mode::silent_fan_mode ? fanModeSilent
+                                                                          : fanModeAuto);
+}
+
+bool Operate::isCustomFanCurveWanted() const {
+    Settings s;
+    return s.getValue(settingsGroup + "fanModeAdvanced").toBool();
+}
+
+void Operate::applyCustomFanCurveIfWanted() const {
+    if (!isCustomFanCurveWanted())
+        return;
+    // Fan curves live in EC memory and need ec_sys.
+    if (!helper.updateData())
+        return;
+    Settings s;
+    // The EC may reload its default table on mode changes, so write the curve again.
+    if (s.isValueExist(settingsGroup + "fan1SpeedSettings"))
+        setFan1SpeedSettings(s.getValueVector(settingsGroup + "fan1SpeedSettings"));
+    if (s.isValueExist(settingsGroup + "fan2SpeedSettings"))
+        setFan2SpeedSettings(s.getValueVector(settingsGroup + "fan2SpeedSettings"));
+    if (s.isValueExist(settingsGroup + "fan1TempSettings"))
+        setFan1TempSettings(s.getValueVector(settingsGroup + "fan1TempSettings"));
+    if (s.isValueExist(settingsGroup + "fan2TempSettings"))
+        setFan2TempSettings(s.getValueVector(settingsGroup + "fan2TempSettings"));
+    setFanModeAdvanced(true, false);
+}
+
+bool Operate::ensureCustomFanCurve() const {
+    if (!isCustomFanCurveWanted() || getFanMode() == fan_mode::advanced_fan_mode)
+        return false;
+    applyCustomFanCurveIfWanted();
+    return true;
 }
 
 int Operate::getValue(int address) const {
@@ -579,22 +632,11 @@ void Operate::loadSettings() const {
     if (isUsbPowerShareSupport() && s.isValueExist(settingsGroup + "UsbPowerShare"))
         setUsbPowerShareState(s.getValue(settingsGroup + "UsbPowerShare").toBool());
 
-    if (s.isValueExist(settingsGroup + "fan1SpeedSettings"))
-        setFan1SpeedSettings(s.getValueVector(settingsGroup + "fan1SpeedSettings"));
-    if (s.isValueExist(settingsGroup + "fan2SpeedSettings"))
-        setFan2SpeedSettings(s.getValueVector(settingsGroup + "fan2SpeedSettings"));
-    if (s.isValueExist(settingsGroup + "fan1TempSettings"))
-        setFan1TempSettings(s.getValueVector(settingsGroup + "fan1TempSettings"));
-    if (s.isValueExist(settingsGroup + "fan2TempSettings"))
-        setFan2TempSettings(s.getValueVector(settingsGroup + "fan2TempSettings"));
-    if (s.isValueExist(settingsGroup + "fanModeAdvanced"))
-        setFanModeAdvanced(s.getValue(settingsGroup + "fanModeAdvanced").toBool());
+    applyCustomFanCurveIfWanted();
 }
 
 void Operate::handleWakeEvent() const {
-    Settings s;
-    if (s.isValueExist(settingsGroup + "fanModeAdvanced"))
-        setFanModeAdvanced(s.getValue(settingsGroup + "fanModeAdvanced").toBool());
+    applyCustomFanCurveIfWanted();
 }
 
 int Operate::detectFan1Address() const {

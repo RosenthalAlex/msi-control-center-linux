@@ -38,7 +38,17 @@ MainWindow::MainWindow(QWidget *parent)
         : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    connect(ui->advancedFanControlCheckBox, &QCheckBox::toggled, this, &MainWindow::setFanModeAdvanced);
+    // clicked = user's choice (saved); toggled = keep the page in sync
+    connect(ui->advancedFanControlCheckBox, &QCheckBox::clicked, this, &MainWindow::setFanModeAdvanced);
+    connect(ui->advancedFanControlCheckBox, &QCheckBox::toggled, this, [this](bool on) {
+        ui->fanControlTabWidget->setEnabled(on);
+        if (!on) {
+            ui->fanSpeedResetButton->setEnabled(false);
+            ui->fanSpeedApplyButton->setEnabled(false);
+        } else {
+            checkFanSettingsChanged();
+        }
+    });
 
     connect(ui->fan1Speed1Slider, &QSlider::valueChanged, this, [this]() {
         ui->fan1Speed1Label->setText(QString("%1%").arg(ui->fan1Speed1Slider->value()));
@@ -640,7 +650,9 @@ void MainWindow::updateFanMode() {
 }
 
 void MainWindow::updateFanSpeedSettings() {
-    ui->advancedFanControlCheckBox->setChecked(operate.getFanMode() == fan_mode::advanced_fan_mode);
+    // Show the user's choice, not a mode change that may have reset the EC.
+    ui->advancedFanControlCheckBox->setChecked(operate.isCustomFanCurveWanted() ||
+                                               operate.getFanMode() == fan_mode::advanced_fan_mode);
 
     QVector fan1SpeedSettings = operate.getFan1SpeedSettings();
     QVector fan1TempSettings = operate.getFan1TempSettings();
@@ -787,10 +799,14 @@ void MainWindow::setFanSpeedSettings() {
 }
 
 void MainWindow::setFanModeAdvanced(bool enabled) const {
+    if (enabled) {
+        // Store the curve shown on the page so it can be restored later.
+        operate.setFan1SpeedSettings(getFan1SpeedValues());
+        operate.setFan1TempSettings(getFan1TempValues());
+        operate.setFan2SpeedSettings(getFan2SpeedValues());
+        operate.setFan2TempSettings(getFan2TempValues());
+    }
     operate.setFanModeAdvanced(enabled);
-    ui->fanControlTabWidget->setEnabled(enabled);
-    ui->fanSpeedResetButton->setEnabled(enabled);
-    ui->fanSpeedApplyButton->setEnabled(enabled);
 }
 
 void MainWindow::checkFanSettingsChanged() const {
@@ -838,7 +854,12 @@ void MainWindow::timerSleepTimeout() {
         operate.handleWakeEvent();
         if (keyboardRgbWidget)
             keyboardRgbWidget->restore();
+        return;
     }
+
+    // Something (EC, a mode change elsewhere) left advanced fan mode: put the custom curve back.
+    if (isActive && operate.ensureCustomFanCurve())
+        updateFanMode();
 }
 
 void MainWindow::setModeFromSelection(PowerProfile profile) {

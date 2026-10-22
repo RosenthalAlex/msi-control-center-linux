@@ -20,6 +20,9 @@ All notable changes to this project will be documented in this file.
 - Touchpad on/off key works on Katana 15/17 HX (udev hwdb maps its Ctrl+Super+F24 to the touchpad toggle key)
 - "Start automatically at login" option; launching the app again raises the running window
 - Charge limit is re-applied at start
+- The custom fan curve is kept: it is re-applied after every mode change (manual, charger or system
+  power profile), after sleep and at start, and a 10 s check puts it back if the EC drops it.
+  Only clicking the checkbox changes the saved choice.
 
 ### Changed
 - Raw EC writes for keyboard backlight mode and USB power share are disabled on msi-ec systems,
