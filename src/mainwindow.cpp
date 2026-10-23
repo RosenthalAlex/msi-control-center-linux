@@ -19,6 +19,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "operate.h"
+#include "gpu_widget.h"
 #include "keyboard_rgb_widget.h"
 #include "settings.h"
 #include "sysinfo.h"
@@ -506,6 +507,18 @@ void MainWindow::createExtraWidgets() {
     ui->gridLayout_15->removeItem(ui->verticalSpacer_4);
     ui->gridLayout_15->addWidget(healthBox, 4, 0);
     ui->gridLayout_15->addItem(ui->verticalSpacer_4, 5, 0);
+
+    // GPU mode (hybrid / dGPU off)
+    // (the dGPU is missing from sysfs while turned off, so ask the helper)
+    if (auto *gpuWidget = new GpuWidget(this); gpuWidget->isRelevant()) {
+        auto *gpuScroll = new QScrollArea(this);
+        gpuScroll->setWidgetResizable(true);
+        gpuScroll->setFrameShape(QFrame::NoFrame);
+        gpuScroll->setWidget(gpuWidget);
+        ui->tabWidget->insertTab(ui->tabWidget->indexOf(ui->fanControlTab) + 1, gpuScroll, tr("GPU"));
+    } else {
+        delete gpuWidget;
+    }
 
     // RGB keyboard (separate USB controller, not part of the EC)
     keyboardRgbWidget = new KeyboardRgbWidget(this);

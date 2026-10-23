@@ -23,6 +23,7 @@
 #define INTERFACE_NAME "dmitry_s93.MControlCenter"
 #define INTERFACE_NAME_MSI_EC "BeardOverflow.msi_ec"
 #define INTERFACE_NAME_KBD_RGB "dmitry_s93.MControlCenter.KeyboardRgb"
+#define INTERFACE_NAME_GPU "dmitry_s93.MControlCenter.Gpu"
 
 #define POLKIT_ACTION_ID "io.github.mcontrolcenter.control"
 

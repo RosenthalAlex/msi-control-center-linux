@@ -18,6 +18,7 @@
 
 #include "helper.h"
 #include "msi-ec.h"
+#include "gpu-switch.h"
 #include "keyboard-rgb.h"
 #include "polkit.h"
 #include "readwrite.h"
@@ -86,6 +87,11 @@ bool Helper::loadEcSysModule() const {
 
 int main(int argc, char *argv[]) {
     QCoreApplication a(argc, argv);
+
+    // Run by mcontrolcenter-gpu.service early at boot
+    if (QCoreApplication::arguments().contains("--apply-gpu-mode"))
+        return GpuSwitch::applySavedModeAtBoot();
+
     Polkit::registerTypes();
 
     QDBusConnection bus = QDBusConnection::systemBus();
@@ -102,6 +108,10 @@ int main(int argc, char *argv[]) {
     DBusContextObject objKbdRgb;
     new KeyboardRgb(&objKbdRgb);
     bus.registerObject("/keyboard_rgb", &objKbdRgb);
+
+    DBusContextObject objGpu;
+    new GpuSwitch(&objGpu);
+    bus.registerObject("/gpu", &objGpu);
 
     if (!bus.registerService(SERVICE_NAME)) {
         fprintf(stderr, "%s\n", qPrintable(bus.lastError().message()));

@@ -1,0 +1,15 @@
+[Unit]
+Description=MControlCenter: apply the GPU mode (turns the dGPU off in integrated mode)
+Documentation=https://github.com/RosenthalAlex/MControlCenter
+DefaultDependencies=no
+After=local-fs.target systemd-udev-trigger.service systemd-modules-load.service
+Before=display-manager.service nvidia-persistenced.service nvidia-powerd.service graphical.target
+# Nothing to do unless a mode was chosen in MControlCenter
+ConditionPathExists=/etc/mcontrolcenter/gpu-mode
+
+[Service]
+Type=oneshot
+ExecStart=@MCC_HELPER_DIR@/mcontrolcenter-helper --apply-gpu-mode
+
+[Install]
+WantedBy=multi-user.target

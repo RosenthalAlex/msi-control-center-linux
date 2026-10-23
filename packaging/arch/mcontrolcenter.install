@@ -7,11 +7,19 @@ _reload_keyboard() {
 
 post_install() {
     _reload_keyboard
+    # No-op until "Integrated" GPU mode is chosen in the app
+    systemctl enable mcontrolcenter-gpu.service >/dev/null 2>&1 || true
     echo ">> Reboot once (or run: sudo modprobe ec_sys write_support=1) to enable fan curves."
 }
 
 post_upgrade() {
     _reload_keyboard
+    systemctl enable mcontrolcenter-gpu.service >/dev/null 2>&1 || true
+}
+
+pre_remove() {
+    systemctl disable mcontrolcenter-gpu.service >/dev/null 2>&1
+    return 0
 }
 
 post_remove() {

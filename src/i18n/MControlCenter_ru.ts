@@ -2,6 +2,82 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU" sourcelanguage="en_US">
 <context>
+    <name>GpuWidget</name>
+    <message>
+        <source>GPU mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hybrid: the NVIDIA GPU sleeps and wakes up when an app needs it</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Integrated: the NVIDIA GPU is turned off completely (longest battery life)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turn off now</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try again after closing the apps that use the NVIDIA GPU</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NVIDIA GPU</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The helper service is not available.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Current mode: discrete GPU only.&lt;/b&gt; The display is connected to the %1 by the MUX switch, so it cannot be turned off.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To use these modes, switch the GPU mode to &lt;b&gt;Hybrid&lt;/b&gt; (MSHybrid) in the BIOS setup and restart. On MSI laptops: press &lt;b&gt;Del&lt;/b&gt; repeatedly at startup, then look for the GPU / Graphics or MUX setting under &lt;i&gt;Advanced&lt;/i&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No discrete GPU found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Current mode: integrated.&lt;/b&gt; The NVIDIA GPU is off.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>sleeping</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>active</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Current mode: hybrid.&lt;/b&gt; %1 is %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Integrated mode is saved and will be applied at the next restart, before the desktop starts.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The NVIDIA GPU is in use right now by: &lt;b&gt;%1&lt;/b&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Could not change the GPU mode:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The NVIDIA GPU is back. Apps can use it right away; log out and back in if the desktop should also use it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>KeyboardRgbWidget</name>
     <message>
         <source>Controller: %1</source>
@@ -308,6 +384,10 @@
     </message>
     <message>
         <source>Battery:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GPU</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
