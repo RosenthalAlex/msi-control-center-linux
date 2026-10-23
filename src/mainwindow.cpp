@@ -1140,7 +1140,7 @@ void MainWindow::createTrayIcon() {
     trayIcon->setContextMenu(trayIconMenu);
     auto icon = QIcon(":/images/AppIcon");
     trayIcon->setIcon(icon);
-    trayIcon->setToolTip("MControlCenter");
+    trayIcon->setToolTip("MSI Control Center");
 
     trayIcon->show();
 

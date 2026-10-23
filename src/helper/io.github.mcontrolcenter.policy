@@ -3,8 +3,8 @@
  "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
  "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
 <policyconfig>
-  <vendor>MControlCenter</vendor>
-  <vendor_url>https://github.com/dmitry-s93/MControlCenter</vendor_url>
+  <vendor>MSI Control Center for Linux</vendor>
+  <vendor_url>https://github.com/RosenthalAlex/msi-control-center-linux</vendor_url>
   <icon_name>mcontrolcenter</icon_name>
 
   <action id="io.github.mcontrolcenter.control">

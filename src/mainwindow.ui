@@ -32,7 +32,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string notr="true">MControlCenter</string>
+   <string notr="true">MSI Control Center</string>
   </property>
   <property name="setWindowOpacity" stdset="0">
    <string/>
@@ -1942,7 +1942,7 @@
           <item row="4" column="1">
            <widget class="QLabel" name="bugTrackerValueLabel">
             <property name="text">
-             <string notr="true">&lt;a href=&quot;https://github.com/dmitry-s93/MControlCenter/issues&quot;&gt;https://github.com/dmitry-s93/MControlCenter/issues&lt;/a&gt;</string>
+             <string notr="true">&lt;a href=&quot;https://github.com/RosenthalAlex/msi-control-center-linux/issues&quot;&gt;https://github.com/RosenthalAlex/msi-control-center-linux/issues&lt;/a&gt;</string>
             </property>
             <property name="openExternalLinks">
              <bool>true</bool>
@@ -1962,7 +1962,7 @@
           <item row="3" column="1">
            <widget class="QLabel" name="gitHubValueLabel">
             <property name="text">
-             <string notr="true">&lt;a href=&quot;https://github.com/dmitry-s93/MControlCenter&quot;&gt;https://github.com/dmitry-s93/MControlCenter&lt;/a&gt;</string>
+             <string notr="true">&lt;a href=&quot;https://github.com/RosenthalAlex/msi-control-center-linux&quot;&gt;https://github.com/RosenthalAlex/msi-control-center-linux&lt;/a&gt;</string>
             </property>
             <property name="openExternalLinks">
              <bool>true</bool>

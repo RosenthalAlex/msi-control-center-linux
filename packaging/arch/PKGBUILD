@@ -2,10 +2,10 @@
 #   cd packaging/arch && makepkg -si
 pkgname=mcontrolcenter-katana
 pkgver=0.6.0
-pkgrel=6
-pkgdesc="Control center for MSI laptops: performance modes, fan curves, battery limit, RGB keyboard"
+pkgrel=7
+pkgdesc="MSI Control Center for Linux: performance modes, fan curves, battery limit, GPU mode, RGB keyboard"
 arch=('x86_64')
-url="https://github.com/dmitry-s93/MControlCenter"
+url="https://github.com/RosenthalAlex/msi-control-center-linux"
 license=('GPL-3.0-or-later')
 depends=('qt6-base' 'polkit' 'dbus' 'hicolor-icon-theme')
 makedepends=('cmake' 'ninja' 'qt6-tools')

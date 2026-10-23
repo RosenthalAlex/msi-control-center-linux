@@ -1,6 +1,6 @@
 [Unit]
 Description=MControlCenter: apply the GPU mode (turns the dGPU off in integrated mode)
-Documentation=https://github.com/RosenthalAlex/MControlCenter
+Documentation=https://github.com/RosenthalAlex/msi-control-center-linux
 DefaultDependencies=no
 After=local-fs.target systemd-udev-trigger.service systemd-modules-load.service
 Before=display-manager.service nvidia-persistenced.service nvidia-powerd.service graphical.target
