@@ -2,6 +2,83 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="hu_HU" sourcelanguage="en_US">
 <context>
+    <name>GpuWidget</name>
+    <message>
+        <source>GPU mode</source>
+        <translation>GPU mód</translation>
+    </message>
+    <message>
+        <source>Hybrid: the NVIDIA GPU sleeps and wakes up when an app needs it</source>
+        <translation>Hibrid: az NVIDIA GPU alszik, és felébred, ha egy alkalmazásnak szüksége van rá</translation>
+    </message>
+    <message>
+        <source>Integrated: the NVIDIA GPU is turned off completely (longest battery life)</source>
+        <translation>Integrált: az NVIDIA GPU teljesen ki van kapcsolva (leghosszabb akkuidő)</translation>
+    </message>
+    <message>
+        <source>Turn off now</source>
+        <translation>Kikapcsolás most</translation>
+    </message>
+    <message>
+        <source>Try again after closing the apps that use the NVIDIA GPU</source>
+        <translation>Próbáld újra, miután bezártad az NVIDIA GPU-t használó alkalmazásokat</translation>
+    </message>
+    <message>
+        <source>NVIDIA GPU</source>
+        <translation>NVIDIA GPU</translation>
+    </message>
+    <message>
+        <source>The helper service is not available.</source>
+        <translation>A helper szolgáltatás nem érhető el.</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Current mode: discrete GPU only.&lt;/b&gt; The display is connected to the %1 by the MUX switch, so it cannot be turned off.</source>
+        <translation>&lt;b&gt;Jelenlegi mód: csak dedikált GPU.&lt;/b&gt; A kijelzőt a MUX kapcsoló a(z) %1 kártyára köti, ezért az nem kapcsolható ki.</translation>
+    </message>
+    <message>
+        <source>To use these modes, switch the GPU mode to &lt;b&gt;Hybrid&lt;/b&gt; (MSHybrid) in the BIOS setup and restart. On MSI laptops: press &lt;b&gt;Del&lt;/b&gt; repeatedly at startup, then look for the GPU / Graphics or MUX setting under &lt;i&gt;Advanced&lt;/i&gt;.</source>
+        <translation>A módok használatához állítsd a GPU módot &lt;b&gt;Hybrid&lt;/b&gt;-re (MSHybrid) a BIOS-ban, majd indítsd újra a gépet. MSI laptopon: bekapcsoláskor nyomogasd a &lt;b&gt;Del&lt;/b&gt; gombot, majd az &lt;i&gt;Advanced&lt;/i&gt; menüben keresd a GPU / Graphics vagy MUX beállítást.</translation>
+    </message>
+    <message>
+        <source>No discrete GPU found.</source>
+        <translation>Nem található dedikált GPU.</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Current mode: integrated.&lt;/b&gt; The NVIDIA GPU is off.</source>
+        <translation>&lt;b&gt;Jelenlegi mód: integrált.&lt;/b&gt; Az NVIDIA GPU ki van kapcsolva.</translation>
+    </message>
+    <message>
+        <source>sleeping</source>
+        <translation>alszik</translation>
+    </message>
+    <message>
+        <source>active</source>
+        <translation>aktív</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Current mode: hybrid.&lt;/b&gt; %1 is %2.</source>
+        <translation>&lt;b&gt;Jelenlegi mód: hibrid.&lt;/b&gt; %1 – állapot: %2.</translation>
+    </message>
+    <message>
+        <source>Integrated mode is saved and will be applied at the next restart, before the desktop starts.</source>
+        <translation>Az integrált mód el van mentve, és a következő újraindításkor lép életbe, még az asztal indulása előtt.</translation>
+    </message>
+    <message>
+        <source>The NVIDIA GPU is in use right now by: &lt;b&gt;%1&lt;/b&gt;.</source>
+        <translation>Az NVIDIA GPU-t most ezek használják: &lt;b&gt;%1&lt;/b&gt;.</translation>
+    </message>
+    <message>
+        <source>Could not change the GPU mode:
+%1</source>
+        <translation>Nem sikerült a GPU mód váltása:
+%1</translation>
+    </message>
+    <message>
+        <source>The NVIDIA GPU is back. Apps can use it right away; log out and back in if the desktop should also use it.</source>
+        <translation>Az NVIDIA GPU újra elérhető. Az alkalmazások azonnal használhatják; ha az asztal is használja, jelentkezz ki és vissza.</translation>
+    </message>
+</context>
+<context>
     <name>KeyboardRgbWidget</name>
     <message>
         <source>Controller: %1</source>
@@ -309,6 +386,10 @@
     <message>
         <source>Battery:</source>
         <translation>Akkumulátor:</translation>
+    </message>
+    <message>
+        <source>GPU</source>
+        <translation>GPU</translation>
     </message>
     <message>
         <source>RGB Lighting</source>

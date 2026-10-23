@@ -17,6 +17,7 @@ add_executable(mcontrolcenter-helper
   readwrite.h readwrite.cpp
   msi-ec.h msi-ec.cpp
   keyboard-rgb.h keyboard-rgb.cpp
+  gpu-switch.h gpu-switch.cpp
   polkit.h polkit.cpp
 )
 target_compile_options(mcontrolcenter-helper PRIVATE -Wall -Wextra)
@@ -28,6 +29,8 @@ target_link_libraries(mcontrolcenter-helper PRIVATE
 set(MCC_HELPER_DIR ${CMAKE_INSTALL_FULL_LIBEXECDIR})
 configure_file(mcontrolcenter.helper.service.in
                ${CMAKE_CURRENT_BINARY_DIR}/mcontrolcenter.helper.service @ONLY)
+configure_file(mcontrolcenter-gpu.service.in
+               ${CMAKE_CURRENT_BINARY_DIR}/mcontrolcenter-gpu.service @ONLY)
 
 install(TARGETS mcontrolcenter-helper RUNTIME DESTINATION ${CMAKE_INSTALL_LIBEXECDIR})
 install(FILES mcontrolcenter-helper.conf
@@ -36,3 +39,5 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mcontrolcenter.helper.service
         DESTINATION ${CMAKE_INSTALL_DATADIR}/dbus-1/system-services)
 install(FILES io.github.mcontrolcenter.policy
         DESTINATION ${CMAKE_INSTALL_DATADIR}/polkit-1/actions)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mcontrolcenter-gpu.service
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/systemd/system)

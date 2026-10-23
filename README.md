@@ -147,6 +147,14 @@ The touchpad on/off key sends Ctrl + Super + F24, which desktops ignore. MContro
 toggle key, so GNOME/KDE switch the touchpad and show their indicator. After installing by hand, run
 `sudo systemd-hwdb update && sudo udevadm trigger --subsystem-match=input --action=change`.
 
+### GPU mode (Hybrid / Integrated)
+
+With the MUX switch in hybrid position (MSHybrid in the BIOS), the **GPU** tab can turn the NVIDIA GPU
+off completely. Integrated mode removes the dGPU from the PCI bus; when the desktop is using the GPU
+this happens at the next boot (`mcontrolcenter-gpu.service`, enabled by the Arch package; run
+`sudo systemctl enable mcontrolcenter-gpu.service` after a manual install). Switching back to Hybrid
+works immediately. The MUX itself is set in the BIOS.
+
 ### MUX switching
 
 For laptops with a dGPU **AND** a mux switch, there is a workaround for switching modes:

@@ -23,6 +23,10 @@ All notable changes to this project will be documented in this file.
 - The custom fan curve is kept: it is re-applied after every mode change (manual, charger or system
   power profile), after sleep and at start, and a 10 s check puts it back if the EC drops it.
   Only clicking the checkbox changes the saved choice.
+- GPU page: Hybrid or Integrated mode. Integrated unbinds and removes the dGPU from the PCI bus
+  (like supergfxctl); if the desktop is using it, the mode is applied at the next boot by
+  `mcontrolcenter-gpu.service` before the display manager starts. Back to Hybrid is immediate.
+  Needs the MUX in hybrid position (BIOS); with "discrete GPU only" the page explains how to change it.
 
 ### Changed
 - Raw EC writes for keyboard backlight mode and USB power share are disabled on msi-ec systems,

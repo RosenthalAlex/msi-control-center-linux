@@ -37,6 +37,7 @@ set(PROJECT_SOURCES
     src/keyboard_rgb.cpp src/keyboard_rgb.h
     src/keyboard_rgb_widget.cpp src/keyboard_rgb_widget.h
     src/sysinfo.cpp src/sysinfo.h
+    src/gpu_widget.cpp src/gpu_widget.h
     src/settings.cpp src/settings.h
     src/resources.qrc
 )
