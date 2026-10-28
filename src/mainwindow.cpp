@@ -1232,7 +1232,11 @@ namespace {
 }
 
 int MainWindow::shadowMargin() const {
-    return (isMaximized() || isFullScreen()) ? 0 : 12;
+    // The window is opaque and square: rounded corners and the shadow come from
+    // the compositor/extensions (e.g. Rounded Window Corners), like other apps.
+    // A transparent shadow margin would be blurred by Blur my Shell and rounded
+    // by such extensions on its outer edge instead of the real window edge.
+    return 0;
 }
 
 void MainWindow::setupModernLayout() {
@@ -1240,8 +1244,9 @@ void MainWindow::setupModernLayout() {
         return;
 
     setWindowFlag(Qt::FramelessWindowHint, true);
-    setAttribute(Qt::WA_TranslucentBackground, true);
     setMouseTracking(true);
+    // Resize from the window's inner edge: children cover the edges, so watch their mouse events.
+    qApp->installEventFilter(this);
     setMinimumSize(920, 680);
     if (width() < 1000 || height() < 680)
         resize(qMax(width(), 1000), qMax(height(), 700));
@@ -1375,7 +1380,9 @@ void MainWindow::paintEvent(QPaintEvent *event) {
     }
     p.setClipping(false);
 
-    // Hairline border
+    // Hairline border only with our own rounded frame; otherwise the compositor draws it.
+    if (m == 0)
+        return;
     QColor border = palette().color(QPalette::WindowText);
     border.setAlphaF(dark ? 0.16 : 0.18);
     p.setPen(QPen(border, 1));
@@ -1384,16 +1391,57 @@ void MainWindow::paintEvent(QPaintEvent *event) {
 }
 
 Qt::Edges MainWindow::edgesAt(const QPoint &pos) const {
-    const int m = shadowMargin();
-    if (m == 0)
+    if (isMaximized() || isFullScreen())
         return {};
-    const int grip = m + 4;
+    constexpr int grip = 6;
     Qt::Edges edges;
     if (pos.x() <= grip) edges |= Qt::LeftEdge;
     if (pos.x() >= width() - grip) edges |= Qt::RightEdge;
     if (pos.y() <= grip) edges |= Qt::TopEdge;
     if (pos.y() >= height() - grip) edges |= Qt::BottomEdge;
     return edges;
+}
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event) {
+    if (!headerBar || !watched->isWidgetType())
+        return QMainWindow::eventFilter(watched, event);
+    auto *w = static_cast<QWidget *>(watched);
+    if (w->window() != this)
+        return QMainWindow::eventFilter(watched, event);
+
+    if (event->type() == QEvent::MouseMove || event->type() == QEvent::HoverMove ||
+        event->type() == QEvent::MouseButtonPress) {
+        QPoint global;
+        if (event->type() == QEvent::HoverMove)
+            global = w->mapToGlobal(static_cast<QHoverEvent *>(event)->position().toPoint());
+        else
+            global = static_cast<QMouseEvent *>(event)->globalPosition().toPoint();
+        const Qt::Edges e = edgesAt(mapFromGlobal(global));
+
+        if (event->type() == QEvent::MouseButtonPress) {
+            auto *me = static_cast<QMouseEvent *>(event);
+            if (e && me->button() == Qt::LeftButton && windowHandle()) {
+                windowHandle()->startSystemResize(e);
+                return true;
+            }
+            return QMainWindow::eventFilter(watched, event);
+        }
+
+        Qt::CursorShape shape = Qt::ArrowCursor;
+        if ((e & Qt::LeftEdge && e & Qt::TopEdge) || (e & Qt::RightEdge && e & Qt::BottomEdge))
+            shape = Qt::SizeFDiagCursor;
+        else if ((e & Qt::RightEdge && e & Qt::TopEdge) || (e & Qt::LeftEdge && e & Qt::BottomEdge))
+            shape = Qt::SizeBDiagCursor;
+        else if (e & (Qt::LeftEdge | Qt::RightEdge))
+            shape = Qt::SizeHorCursor;
+        else if (e & (Qt::TopEdge | Qt::BottomEdge))
+            shape = Qt::SizeVerCursor;
+        if (e)
+            setCursor(shape);
+        else if (cursor().shape() != Qt::ArrowCursor)
+            unsetCursor();
+    }
+    return QMainWindow::eventFilter(watched, event);
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event) {
@@ -1407,19 +1455,6 @@ void MainWindow::mousePressEvent(QMouseEvent *event) {
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event) {
-    if (headerBar) {
-        const Qt::Edges e = edgesAt(event->position().toPoint());
-        Qt::CursorShape shape = Qt::ArrowCursor;
-        if ((e & Qt::LeftEdge && e & Qt::TopEdge) || (e & Qt::RightEdge && e & Qt::BottomEdge))
-            shape = Qt::SizeFDiagCursor;
-        else if ((e & Qt::RightEdge && e & Qt::TopEdge) || (e & Qt::LeftEdge && e & Qt::BottomEdge))
-            shape = Qt::SizeBDiagCursor;
-        else if (e & (Qt::LeftEdge | Qt::RightEdge))
-            shape = Qt::SizeHorCursor;
-        else if (e & (Qt::TopEdge | Qt::BottomEdge))
-            shape = Qt::SizeVerCursor;
-        setCursor(shape);
-    }
     QMainWindow::mouseMoveEvent(event);
 }
 
