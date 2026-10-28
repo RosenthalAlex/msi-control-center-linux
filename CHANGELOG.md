@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 ### Added
+- Keyboard lighting can follow GNOME's accent color (also when an extension such as Auto Accent Colour
+  changes it from the wallpaper), with a smooth 1.2 s fade to the new color.
 - Discrete GPU mode (firmware MUX) on the GPU page, applied after a restart, with a "Restart now" button.
   Uses the MsiDCVarData UEFI variable and SMI 0x11 like MSI Center; limited to known variable layouts,
   needs the charger or more than 10 % battery, refused under kernel lockdown, backups in /var/lib/mcontrolcenter/mux-backup/.

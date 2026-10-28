@@ -215,6 +215,18 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Follow the GNOME accent color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The keyboard always lights up in the desktop&apos;s accent color and fades to the new one when it changes (e.g. with the Auto Accent Colour extension).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Needs GNOME 47 or newer (accent color setting).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Restore this lighting when MControlCenter starts and after sleep</source>
         <translation type="unfinished"></translation>
     </message>

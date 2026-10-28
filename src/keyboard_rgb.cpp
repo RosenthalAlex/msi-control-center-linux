@@ -159,6 +159,8 @@ KeyboardRgb::State KeyboardRgb::loadState() {
         state.direction = s.getValue(group + "direction").toInt() ? 1 : 0;
     if (s.isValueExist(group + "restoreOnStart"))
         state.restoreOnStart = s.getValue(group + "restoreOnStart").toBool();
+    if (s.isValueExist(group + "followAccent"))
+        state.followAccent = s.getValue(group + "followAccent").toBool();
     return state;
 }
 
@@ -171,4 +173,5 @@ void KeyboardRgb::saveState(const State &state) {
     Settings::setValue(group + "speed", state.speedSeconds);
     Settings::setValue(group + "direction", state.direction);
     Settings::setValue(group + "restoreOnStart", state.restoreOnStart);
+    Settings::setValue(group + "followAccent", state.followAccent);
 }

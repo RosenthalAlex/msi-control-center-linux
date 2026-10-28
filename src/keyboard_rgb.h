@@ -45,6 +45,7 @@ public:
         int speedSeconds = 5;   // duration of one animation cycle
         int direction = 0;      // wave: 0 = right-to-left, 1 = left-to-right
         bool restoreOnStart = true;
+        bool followAccent = false;  // use GNOME's accent color for all zones
     };
 
     KeyboardRgb();
