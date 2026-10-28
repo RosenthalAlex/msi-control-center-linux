@@ -25,6 +25,10 @@
 #include <QProcess>
 #include <QStandardPaths>
 #include <QStyleFactory>
+#include <QDir>
+#include <QImage>
+#include <QPainter>
+#include <functional>
 
 namespace {
     QString gsettingsGet(const QString &schema, const QString &key) {
@@ -56,6 +60,31 @@ namespace {
 
     QString hex(const QColor &c) {
         return c.name(QColor::HexRgb);
+    }
+
+    /// Draws a small image for the stylesheet (Qt stylesheets need image files) and
+    /// writes it as PNG, with an @2x variant for HiDPI. Returns the 1x path.
+    QString writeAsset(const QString &name, int size, const std::function<void(QPainter &, qreal)> &draw) {
+        const QString dir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/style";
+        QDir().mkpath(dir);
+        for (int scale : {1, 2}) {
+            QImage img(size * scale, size * scale, QImage::Format_ARGB32_Premultiplied);
+            img.fill(Qt::transparent);
+            QPainter p(&img);
+            p.setRenderHint(QPainter::Antialiasing);
+            p.scale(scale, scale);
+            draw(p, size);
+            p.end();
+            img.save(dir + "/" + name + (scale == 2 ? "@2x" : "") + ".png");
+        }
+        return dir + "/" + name + ".png";
+    }
+
+    QString chevron(const QString &name, const QColor &c) {
+        return writeAsset(name, 12, [c](QPainter &p, qreal) {
+            p.setPen(QPen(c, 1.6, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            p.drawPolyline(QPolygonF({QPointF(2.5, 4.5), QPointF(6, 8), QPointF(9.5, 4.5)}));
+        });
     }
 
     QColor mix(const QColor &a, const QColor &b, double t) {
@@ -106,6 +135,20 @@ void AppStyle::apply() {
     const QColor card = dark ? mix(window, Qt::white, 0.06) : mix(window, Qt::white, 0.75);
     const QColor sidebar = dark ? mix(window, Qt::black, 0.18) : mix(window, Qt::black, 0.04);
     const QColor field = dark ? mix(window, Qt::white, 0.10) : base;
+
+    QColor dim = text;
+    dim.setAlphaF(0.4);
+    const QString arrow = chevron("arrow", text);
+    const QString arrowDisabled = chevron("arrow-disabled", dim);
+    const QString check = writeAsset("check", 18, [accentText](QPainter &p, qreal) {
+        p.setPen(QPen(accentText, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        p.drawPolyline(QPolygonF({QPointF(4.5, 9.3), QPointF(7.6, 12.2), QPointF(13.5, 5.8)}));
+    });
+    const QString dot = writeAsset("dot", 18, [accentText](QPainter &p, qreal) {
+        p.setPen(Qt::NoPen);
+        p.setBrush(accentText);
+        p.drawEllipse(QPointF(9, 9), 3.6, 3.6);
+    });
 
     QString css = QString(R"(
 QMainWindow > QWidget#mccCentral { background: transparent; }
@@ -158,7 +201,10 @@ QComboBox, QSpinBox, QLineEdit {
 }
 QComboBox:hover, QSpinBox:hover, QLineEdit:hover { border-color: %ACCENTLINE%; }
 QComboBox:focus, QSpinBox:focus, QLineEdit:focus { border-color: %ACCENT%; }
-QComboBox::drop-down { border: none; width: 22px; }
+QComboBox::drop-down { border: none; width: 26px; subcontrol-origin: padding; subcontrol-position: center right; }
+QComboBox::down-arrow { image: url(%ARROW%); width: 12px; height: 12px; }
+QComboBox::down-arrow:disabled { image: url(%ARROWDIS%); }
+QComboBox:disabled { color: %DISABLED%; }
 QSpinBox::up-button, QSpinBox::down-button { width: 0px; border: none; }
 QSpinBox { padding-right: 8px; }
 QComboBox QAbstractItemView {
@@ -166,19 +212,41 @@ QComboBox QAbstractItemView {
     selection-background-color: %SELECT%; selection-color: %TEXT%; padding: 4px; outline: none;
 }
 
-QSlider::groove:horizontal { height: 6px; background: %TRACK%; border-radius: 3px; }
-QSlider::sub-page:horizontal { background: %ACCENT%; border-radius: 3px; }
+QSlider:horizontal { min-height: 26px; }
+QSlider:vertical { min-width: 26px; }
+QSlider::groove:horizontal { height: 6px; background: %TRACK%; border-radius: 3px; margin: 0px 9px; }
+QSlider::sub-page:horizontal { background: %ACCENT%; border-radius: 3px; margin: 0px 0px 0px 9px; }
 QSlider::handle:horizontal {
-    background: #ffffff; border: 1px solid %LINE%; width: 18px; height: 18px;
-    margin: -7px 0px; border-radius: 9px;
+    background: #ffffff; border: 1px solid %LINE%;
+    width: 18px; height: 18px; margin: -6px -9px; border-radius: 9px;
 }
-QSlider::groove:vertical { width: 6px; background: %TRACK%; border-radius: 3px; }
-QSlider::add-page:vertical { background: %ACCENT%; border-radius: 3px; }
+QSlider::groove:vertical { width: 6px; background: %TRACK%; border-radius: 3px; margin: 9px 0px; }
+QSlider::add-page:vertical { background: %ACCENT%; border-radius: 3px; margin: 0px 0px 9px 0px; }
 QSlider::handle:vertical {
-    background: #ffffff; border: 1px solid %LINE%; width: 18px; height: 18px;
-    margin: 0px -7px; border-radius: 9px;
+    background: #ffffff; border: 1px solid %LINE%;
+    width: 18px; height: 18px; margin: -9px -6px; border-radius: 9px;
 }
-QSlider::groove:disabled, QSlider::sub-page:disabled, QSlider::add-page:disabled { background: %TRACK%; }
+QSlider::handle:hover { border-color: %ACCENTLINE%; }
+QSlider::sub-page:disabled, QSlider::add-page:disabled { background: %TRACK%; }
+QSlider::handle:disabled { background: %FIELD%; }
+
+QCheckBox, QRadioButton { spacing: 8px; }
+QCheckBox::indicator, QGroupBox::indicator {
+    width: 18px; height: 18px; border-radius: 5px;
+    border: 1px solid %LINESTRONG%; background: %FIELD%;
+}
+QRadioButton::indicator {
+    width: 18px; height: 18px; border-radius: 10px;
+    border: 1px solid %LINESTRONG%; background: %FIELD%;
+}
+QCheckBox::indicator:hover, QRadioButton::indicator:hover, QGroupBox::indicator:hover { border-color: %ACCENTLINE%; }
+QCheckBox::indicator:checked, QGroupBox::indicator:checked {
+    background: %ACCENT%; border-color: %ACCENT%; image: url(%CHECK%);
+}
+QRadioButton::indicator:checked { background: %ACCENT%; border-color: %ACCENT%; image: url(%DOT%); }
+QCheckBox::indicator:disabled, QRadioButton::indicator:disabled { background: %TRACK%; border-color: transparent; }
+QCheckBox::indicator:checked:disabled, QRadioButton::indicator:checked:disabled { background: %ACCENTLINE%; }
+QCheckBox:disabled, QRadioButton:disabled { color: %DISABLED%; }
 
 QTabWidget#fanControlTabWidget QTabBar::tab {
     background: transparent; border: none; border-radius: 8px;
@@ -212,6 +280,11 @@ QScrollBar::add-page, QScrollBar::sub-page { background: transparent; }
        .replace("%LINEHOVER%", rgba(text, 0.35))
        .replace("%LINE%", rgba(text, dark ? 0.10 : 0.13))
        .replace("%TRACK%", rgba(text, dark ? 0.18 : 0.15))
-       .replace("%DISABLED%", rgba(text, 0.4));
+       .replace("%DISABLED%", rgba(text, 0.4))
+       .replace("%LINESTRONG%", rgba(text, dark ? 0.28 : 0.30))
+       .replace("%ARROWDIS%", arrowDisabled)
+       .replace("%ARROW%", arrow)
+       .replace("%CHECK%", check)
+       .replace("%DOT%", dot);
     qApp->setStyleSheet(css);
 }
