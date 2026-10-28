@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 
 ## Unreleased
+### Changed
+- New look that follows the GTK theme: Qt's GTK3 platform theme supplies colors, fonts, icons and
+  file dialogs on GNOME-like desktops. A GNOME-style header bar (window buttons on the side set in
+  `button-layout`, macOS "traffic lights" with MacTahoe/WhiteSur themes), a sidebar instead of tabs,
+  rounded cards, pill buttons and modern sliders. Set `MCC_NATIVE_DECORATIONS=1` to get the
+  system's window frame and the old tab layout back.
 
 ## [0.6.0] 2026-10-23
 ### Added

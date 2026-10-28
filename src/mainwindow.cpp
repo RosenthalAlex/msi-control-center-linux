@@ -19,13 +19,19 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "operate.h"
+#include "appstyle.h"
 #include "gpu_widget.h"
+#include "headerbar.h"
 #include "keyboard_rgb_widget.h"
 #include "settings.h"
 #include "sysinfo.h"
 #include <QTimer>
 #include <QMessageBox>
 #include <QStandardPaths>
+#include <QListWidget>
+#include <QPainter>
+#include <QPainterPath>
+#include <QWindow>
 
 Operate operate;
 PowerMonitor powerMonitor;
@@ -167,6 +173,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Disable debug tab
     ui->tabWidget->setTabVisible(ui->tabWidget->indexOf(ui->debugTab), false);
     createExtraWidgets();
+    setupModernLayout();
     setTabsEnabled(false);
 
     if (!operate.isMsiEcLoaded()) {
@@ -319,6 +326,7 @@ void MainWindow::loadConfigs() {
     }
 
     updateFnSuperSwapState();
+    rebuildSidebar();
 }
 
 QString MainWindow::intToQString(int value) const {
@@ -1190,4 +1198,236 @@ void MainWindow::createActions() {
 
 void MainWindow::saveStateRequest(QSessionManager &sessionManager) {
     sessionManager.setRestartHint(QSessionManager::RestartNever);
+}
+
+// ---------------- Modern GTK-like window ----------------
+
+namespace {
+    QIcon pageIcon(const QWidget *page, const QString &title) {
+        auto pick = [](std::initializer_list<const char *> names) {
+            for (const char *n : names) {
+                const QIcon icon = QIcon::fromTheme(QString::fromLatin1(n));
+                if (!icon.isNull())
+                    return icon;
+            }
+            return QIcon();
+        };
+        const QString name = page->objectName();
+        if (name == "overviewTab")
+            return pick({"computer", "utilities-system-monitor", "preferences-system"});
+        if (name == "batteryTab")
+            return pick({"battery", "battery-full", "gnome-power-manager", "preferences-system-power"});
+        if (name == "fanControlTab")
+            return pick({"temperature", "sensors-fan", "weather-windy", "applications-system"});
+        if (name == "keyboardTab")
+            return pick({"input-keyboard", "preferences-desktop-keyboard"});
+        if (name == "aboutTab")
+            return pick({"help-about", "dialog-information"});
+        if (name == "debugTab")
+            return pick({"utilities-terminal", "dialog-warning"});
+        if (title.contains("GPU"))
+            return pick({"video-display", "nvidia", "preferences-desktop-display"});
+        return pick({"preferences-desktop-color", "applications-graphics", "color-select", "preferences-desktop"});
+    }
+}
+
+int MainWindow::shadowMargin() const {
+    return (isMaximized() || isFullScreen()) ? 0 : 12;
+}
+
+void MainWindow::setupModernLayout() {
+    if (qEnvironmentVariableIntValue("MCC_NATIVE_DECORATIONS") == 1)
+        return;
+
+    setWindowFlag(Qt::FramelessWindowHint, true);
+    setAttribute(Qt::WA_TranslucentBackground, true);
+    setMouseTracking(true);
+    setMinimumSize(920, 680);
+    if (width() < 1000 || height() < 680)
+        resize(qMax(width(), 1000), qMax(height(), 700));
+    const int m = shadowMargin();
+    setContentsMargins(m, m, m, m);
+
+    headerBar = new HeaderBar(this);
+    setMenuWidget(headerBar);
+
+    // Sidebar + the existing pages (tab bar hidden)
+    QWidget *oldCentral = takeCentralWidget();
+    auto *central = new QWidget(this);
+    central->setObjectName("mccCentral");
+    auto *row = new QHBoxLayout(central);
+    row->setContentsMargins(0, 0, 0, 0);
+    row->setSpacing(0);
+
+    sidebarPane = new QWidget(central);
+    sidebarPane->setObjectName("mccSidebarPane");
+    sidebarPane->setFixedWidth(210);
+    auto *sideLayout = new QVBoxLayout(sidebarPane);
+    sideLayout->setContentsMargins(6, 6, 6, 6);
+    sidebar = new QListWidget(sidebarPane);
+    sidebar->setObjectName("mccSidebar");
+    sidebar->setIconSize(QSize(22, 22));
+    sidebar->setFrameShape(QFrame::NoFrame);
+    sidebar->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    sideLayout->addWidget(sidebar);
+
+    row->addWidget(sidebarPane);
+    row->addWidget(oldCentral, 1);
+    setCentralWidget(central);
+
+    // QTabWidget shows its tab bar again on every tab change, so collapse it instead.
+    ui->tabWidget->tabBar()->setFixedHeight(0);
+    ui->tabWidget->tabBar()->hide();
+    ui->tabWidget->setDocumentMode(true);
+    oldCentral->setContentsMargins(12, 8, 12, 12);
+
+    connect(sidebar, &QListWidget::currentItemChanged, this, [this](QListWidgetItem *item) {
+        if (!item)
+            return;
+        auto *page = item->data(Qt::UserRole).value<QWidget *>();
+        if (page) {
+            ui->tabWidget->setCurrentWidget(page);
+            headerBar->setTitle(item->text());
+        }
+    });
+
+    // App menu in the header bar
+    appMenu = new QMenu(this);
+    if (autostartAction)
+        appMenu->addAction(autostartAction);
+    appMenu->addSeparator();
+    QAction *about = appMenu->addAction(tr("About"));
+    connect(about, &QAction::triggered, this, [this]() {
+        for (int i = 0; i < sidebar->count(); i++) {
+            if (sidebar->item(i)->data(Qt::UserRole).value<QWidget *>() == ui->aboutTab)
+                sidebar->setCurrentRow(i);
+        }
+    });
+    if (quitAction)
+        appMenu->addAction(quitAction);
+    headerBar->setMenu(appMenu);
+
+    rebuildSidebar();
+}
+
+void MainWindow::rebuildSidebar() {
+    if (!sidebar)
+        return;
+    QWidget *current = ui->tabWidget->currentWidget();
+    const QSignalBlocker blocker(sidebar);
+    sidebar->clear();
+    int select = 0;
+    for (int i = 0; i < ui->tabWidget->count(); i++) {
+        if (!ui->tabWidget->isTabVisible(i))
+            continue;
+        QWidget *page = ui->tabWidget->widget(i);
+        const QString title = ui->tabWidget->tabText(i).remove('&');
+        auto *item = new QListWidgetItem(pageIcon(page, title), title, sidebar);
+        item->setData(Qt::UserRole, QVariant::fromValue(page));
+        item->setSizeHint(QSize(0, 38));
+        if (page == current)
+            select = sidebar->count() - 1;
+    }
+    sidebar->setCurrentRow(select);
+    if (auto *item = sidebar->currentItem()) {
+        ui->tabWidget->setCurrentWidget(item->data(Qt::UserRole).value<QWidget *>());
+        headerBar->setTitle(item->text());
+    }
+}
+
+void MainWindow::paintEvent(QPaintEvent *event) {
+    if (!headerBar) {
+        QMainWindow::paintEvent(event);
+        return;
+    }
+    QPainter p(this);
+    p.setRenderHint(QPainter::Antialiasing);
+    const int m = shadowMargin();
+    const QRectF panel = QRectF(rect()).adjusted(m, m, -m, -m);
+    const qreal radius = m > 0 ? 12.0 : 0.0;
+
+    // Soft shadow around the window
+    for (int i = m; i > 0; i--) {
+        const qreal a = 0.045 * (1.0 - qreal(i) / (m + 1));
+        p.setPen(Qt::NoPen);
+        p.setBrush(QColor(0, 0, 0, int(255 * a)));
+        p.drawRoundedRect(panel.adjusted(-i, -i + 2, i, i + 2), radius + i, radius + i);
+    }
+
+    QPainterPath shape;
+    shape.addRoundedRect(panel, radius, radius);
+    const bool dark = AppStyle::isDark();
+    const QColor window = palette().color(QPalette::Window);
+    const QColor side = dark ? window.darker(125) : window.darker(104);
+
+    p.setClipPath(shape);
+    p.fillRect(panel, window);
+    // Header bar and sidebar share the darker surface, like GNOME apps
+    const QRect header = headerBar->geometry();
+    p.fillRect(QRectF(panel.left(), header.top(), panel.width(), header.height()), side);
+    if (sidebarPane && sidebarPane->isVisible()) {
+        const QRect sp(sidebarPane->mapTo(this, QPoint(0, 0)), sidebarPane->size());
+        p.fillRect(QRectF(panel.left(), sp.top(), sp.right() - panel.left() + 1, panel.bottom() - sp.top()), side);
+        QColor line = palette().color(QPalette::WindowText);
+        line.setAlphaF(dark ? 0.10 : 0.12);
+        p.setPen(QPen(line, 1));
+        p.drawLine(QPointF(sp.right() + 0.5, sp.top()), QPointF(sp.right() + 0.5, panel.bottom()));
+    }
+    p.setClipping(false);
+
+    // Hairline border
+    QColor border = palette().color(QPalette::WindowText);
+    border.setAlphaF(dark ? 0.16 : 0.18);
+    p.setPen(QPen(border, 1));
+    p.setBrush(Qt::NoBrush);
+    p.drawRoundedRect(panel.adjusted(0.5, 0.5, -0.5, -0.5), radius, radius);
+}
+
+Qt::Edges MainWindow::edgesAt(const QPoint &pos) const {
+    const int m = shadowMargin();
+    if (m == 0)
+        return {};
+    const int grip = m + 4;
+    Qt::Edges edges;
+    if (pos.x() <= grip) edges |= Qt::LeftEdge;
+    if (pos.x() >= width() - grip) edges |= Qt::RightEdge;
+    if (pos.y() <= grip) edges |= Qt::TopEdge;
+    if (pos.y() >= height() - grip) edges |= Qt::BottomEdge;
+    return edges;
+}
+
+void MainWindow::mousePressEvent(QMouseEvent *event) {
+    const Qt::Edges edges = edgesAt(event->position().toPoint());
+    if (headerBar && event->button() == Qt::LeftButton && edges && windowHandle()) {
+        windowHandle()->startSystemResize(edges);
+        event->accept();
+        return;
+    }
+    QMainWindow::mousePressEvent(event);
+}
+
+void MainWindow::mouseMoveEvent(QMouseEvent *event) {
+    if (headerBar) {
+        const Qt::Edges e = edgesAt(event->position().toPoint());
+        Qt::CursorShape shape = Qt::ArrowCursor;
+        if ((e & Qt::LeftEdge && e & Qt::TopEdge) || (e & Qt::RightEdge && e & Qt::BottomEdge))
+            shape = Qt::SizeFDiagCursor;
+        else if ((e & Qt::RightEdge && e & Qt::TopEdge) || (e & Qt::LeftEdge && e & Qt::BottomEdge))
+            shape = Qt::SizeBDiagCursor;
+        else if (e & (Qt::LeftEdge | Qt::RightEdge))
+            shape = Qt::SizeHorCursor;
+        else if (e & (Qt::TopEdge | Qt::BottomEdge))
+            shape = Qt::SizeVerCursor;
+        setCursor(shape);
+    }
+    QMainWindow::mouseMoveEvent(event);
+}
+
+void MainWindow::changeEvent(QEvent *event) {
+    if (headerBar && event->type() == QEvent::WindowStateChange) {
+        const int m = shadowMargin();
+        setContentsMargins(m, m, m, m);
+        update();
+    }
+    QMainWindow::changeEvent(event);
 }

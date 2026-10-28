@@ -79,6 +79,13 @@
     </message>
 </context>
 <context>
+    <name>HeaderBar</name>
+    <message>
+        <source>Menu</source>
+        <translation>Menü</translation>
+    </message>
+</context>
+<context>
     <name>KeyboardRgbWidget</name>
     <message>
         <source>Controller: %1</source>
@@ -608,6 +615,21 @@ További információ a &lt;Névjegy&gt; oldalon.</translation>
     <message>
         <source>OFF</source>
         <translation>KI</translation>
+    </message>
+</context>
+<context>
+    <name>WindowButton</name>
+    <message>
+        <source>Close</source>
+        <translation>Bezárás</translation>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation>Kis méret</translation>
+    </message>
+    <message>
+        <source>Maximize</source>
+        <translation>Teljes méret</translation>
     </message>
 </context>
 </TS>

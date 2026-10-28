@@ -16,6 +16,7 @@
  * with MControlCenter. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "appstyle.h"
 #include "mainwindow.h"
 #include <QApplication>
 #include <QDBusConnectionInterface>
@@ -41,7 +42,9 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    AppStyle::prepareEnvironment();
     QApplication a(argc, argv);
+    AppStyle::apply();
     QApplication::setApplicationName("MControlCenter");
     QApplication::setApplicationVersion(MControlCenter_VERSION);
     QApplication::setDesktopFileName("mcontrolcenter");

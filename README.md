@@ -33,6 +33,8 @@ It is built and tested on the **MSI Katana 15 HX B14WFK** (MS-1587) and works on
 - Fn ⇄ Win key swap, webcam on/off
 
 **Desktop**
+- Follows the GTK theme (colors, fonts, icons) with a GNOME-style header bar and sidebar;
+  macOS-style window buttons with MacTahoe/WhiteSur themes
 - Tray icon, start at login, single window
 - Complete English and Hungarian translations (plus the translations of the original project)
 
@@ -74,6 +76,13 @@ D-Bus helper, its polkit rule and `ec_sys` are picked up.
 The app runs as your user. Hardware changes go through a small root helper (`mcontrolcenter-helper`)
 that D-Bus starts on demand. Every write is checked with polkit (action `io.github.mcontrolcenter.control`):
 the active local session is allowed without a password, other sessions must authenticate as an administrator.
+
+### Look and feel
+
+On GNOME and other GTK desktops the app uses Qt's GTK3 platform theme, so it picks up the GTK theme's
+colors, fonts and icon theme. It draws its own header bar: the window buttons follow
+`org.gnome.desktop.wm.preferences button-layout`, and with macOS-like themes (MacTahoe, WhiteSur) they are
+drawn as traffic lights. Run with `MCC_NATIVE_DECORATIONS=1` for the system window frame and tabs instead.
 
 ### GPU mode
 
