@@ -18,6 +18,7 @@ add_executable(mcontrolcenter-helper
   msi-ec.h msi-ec.cpp
   keyboard-rgb.h keyboard-rgb.cpp
   gpu-switch.h gpu-switch.cpp
+  msi-mux.h msi-mux.cpp
   polkit.h polkit.cpp
 )
 target_compile_options(mcontrolcenter-helper PRIVATE -Wall -Wextra)

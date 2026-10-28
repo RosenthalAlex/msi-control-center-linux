@@ -8,14 +8,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Hybrid: the NVIDIA GPU sleeps and wakes up when an app needs it</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Integrated: the NVIDIA GPU is turned off completely (longest battery life)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Turn off now</source>
         <translation type="unfinished"></translation>
     </message>
@@ -32,19 +24,43 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;b&gt;Current mode: discrete GPU only.&lt;/b&gt; The display is connected to the %1 by the MUX switch, so it cannot be turned off.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>To use these modes, switch the GPU mode to &lt;b&gt;Hybrid&lt;/b&gt; (MSHybrid) in the BIOS setup and restart. On MSI laptops: press &lt;b&gt;Del&lt;/b&gt; repeatedly at startup, then look for the GPU / Graphics or MUX setting under &lt;i&gt;Advanced&lt;/i&gt;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>No discrete GPU found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&lt;b&gt;Current mode: integrated.&lt;/b&gt; The NVIDIA GPU is off.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hybrid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The Intel GPU drives the display; the NVIDIA GPU sleeps and wakes up when an app needs it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Integrated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The NVIDIA GPU is turned off completely. Longest battery life.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discrete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The display runs directly on the NVIDIA GPU. Best for gaming on the charger. Needs a restart.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restart now</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Current mode: discrete.&lt;/b&gt; The display runs on the %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -57,6 +73,34 @@
     </message>
     <message>
         <source>&lt;b&gt;Current mode: hybrid.&lt;/b&gt; %1 is %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not available: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>discrete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>integrated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>hybrid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Restart to switch to %1 mode.&lt;/b&gt; The firmware switches the display at startup; the screen may stay dark for a few seconds.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The display is connected to the NVIDIA GPU by the MUX switch and this laptop&apos;s firmware switch cannot be used from Linux (%1). Change the GPU mode in the BIOS or in MSI Center on Windows.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Best performance and lowest latency on the charger. On battery it uses much more power than hybrid mode.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -74,6 +118,14 @@
     </message>
     <message>
         <source>The NVIDIA GPU is back. Apps can use it right away; log out and back in if the desktop should also use it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restart</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Restart the computer now? Save your work first.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -17,6 +17,7 @@
  */
 
 #include "gpu-switch.h"
+#include "msi-mux.h"
 #include "polkit.h"
 
 #include <QDir>
@@ -217,8 +218,10 @@ QString GpuSwitch::setMode(const QString &mode) const {
         saveMode(mode);
         return "applied"; // already off
     }
-    if (gpu->drivesDisplay || !hasOtherGpu(gpu->address))
-        return "error: the dGPU drives the display (MUX set to discrete GPU only)";
+    if (gpu->drivesDisplay || !hasOtherGpu(gpu->address)) {
+        // Discrete MUX now: store the choice, it applies after booting in hybrid.
+        return saveMode(mode) ? "pending" : "error: cannot save the setting";
+    }
     if (!saveMode(mode))
         return "error: cannot save the setting";
     if (!processesUsing(dgpuNodes(*gpu)).isEmpty())
@@ -242,4 +245,31 @@ int GpuSwitch::applySavedModeAtBoot() {
     }
     fprintf(stderr, "gpu: integrated mode, removing %s\n", qPrintable(gpu->functions.join(' ')));
     return removeDgpu(*gpu) ? 0 : 1;
+}
+
+QString GpuSwitch::getMuxApplied() const {
+    return MsiMux::name(MsiMux::read().applied);
+}
+
+QString GpuSwitch::getMuxRequested() const {
+    return MsiMux::name(MsiMux::read().requested);
+}
+
+QString GpuSwitch::getMuxUnavailableReason() const {
+    const MsiMux::State st = MsiMux::read();
+    return st.writable ? QString() : st.reason;
+}
+
+QString GpuSwitch::setMuxMode(const QString &mode) const {
+    if (!Polkit::checkAuthorization(parent()))
+        return "error: not authorized";
+    const MsiMux::Mode m = MsiMux::fromName(mode);
+    if (m != MsiMux::Hybrid && m != MsiMux::Discrete)
+        return "error: unknown mode";
+    const MsiMux::State st = MsiMux::read();
+    if (st.requested == m)
+        return st.applied == m ? "ok" : "reboot";
+    if (const QString err = MsiMux::request(m); !err.isEmpty())
+        return "error: " + err;
+    return MsiMux::read().applied == m ? "ok" : "reboot";
 }

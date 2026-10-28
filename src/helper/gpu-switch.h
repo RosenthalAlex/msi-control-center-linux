@@ -62,6 +62,16 @@ public slots:
     QString setMode(const QString &mode) const;
     /// Names of processes that keep the dGPU open.
     [[nodiscard]] QStringList getBlockingProcesses() const;
+
+    // ---- Firmware MUX (Hybrid <-> Discrete, applies after a reboot) ----
+    /// Mode the firmware booted with: "hybrid", "discrete", "integrated", "unknown"
+    [[nodiscard]] QString getMuxApplied() const;
+    /// Mode requested for the next boot
+    [[nodiscard]] QString getMuxRequested() const;
+    /// Empty when switching is possible, otherwise the reason it is not
+    [[nodiscard]] QString getMuxUnavailableReason() const;
+    /// "hybrid" or "discrete". Returns "reboot", "ok" (nothing to change) or "error: ..."
+    QString setMuxMode(const QString &mode) const;
 };
 
 #endif // GPU_SWITCH_H

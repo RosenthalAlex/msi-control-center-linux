@@ -91,10 +91,13 @@ drawn as traffic lights. Run with `MCC_NATIVE_DECORATIONS=1` for the system wind
   If the desktop is using the GPU, this is applied at the next boot by `mcontrolcenter-gpu.service`,
   before the display manager starts. Switching back to Hybrid is immediate.
 
-These modes need the MUX switch in hybrid position. If the laptop runs in discrete-GPU-only mode and the BIOS
-option is locked (as on the Katana 15 HX), the firmware mode can be changed from Linux with
-[msi-gpu-mode](https://github.com/ege-adam/msi-gpu-mode); it worked on the Katana 15 HX B14WFK
-(BIOS E1587IMS.108). This writes a firmware variable: keep a live USB at hand and read its README first.
+- **Discrete**: the firmware MUX connects the display to the NVIDIA GPU (best for gaming on the charger).
+  The app requests it the same way MSI Center does: a 2-bit code in the UEFI variable `MsiDCVarData` plus a
+  firmware call (SMI 0x11), applied at the next boot. Switching back to Hybrid works the same way.
+  Safeguards: only on MSI laptops, only with a known variable layout (seen on the Katana 15 HX B14WFK and the
+  Vector 16 HX), only on the charger, not under kernel lockdown (Secure Boot), and every previous value is saved
+  in `/var/lib/mcontrolcenter/mux-backup/`. Method from [msi-gpu-mode](https://github.com/ege-adam/msi-gpu-mode).
+  On other laptops use the BIOS or MSI Center.
 
 For the NVIDIA GPU to power down on its own in Hybrid mode, add
 `options nvidia NVreg_DynamicPowerManagement=0x02` to `/etc/modprobe.d/nvidia-runtimepm.conf`
