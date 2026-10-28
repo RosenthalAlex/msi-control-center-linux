@@ -521,6 +521,7 @@ void MainWindow::createExtraWidgets() {
     if (auto *gpuWidget = new GpuWidget(this); gpuWidget->isRelevant()) {
         auto *gpuScroll = new QScrollArea(this);
         gpuScroll->setWidgetResizable(true);
+        gpuScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         gpuScroll->setFrameShape(QFrame::NoFrame);
         gpuScroll->setWidget(gpuWidget);
         ui->tabWidget->insertTab(ui->tabWidget->indexOf(ui->fanControlTab) + 1, gpuScroll, tr("GPU"));
@@ -533,6 +534,7 @@ void MainWindow::createExtraWidgets() {
     if (keyboardRgbWidget->isAvailable()) {
         auto *scroll = new QScrollArea(this);
         scroll->setWidgetResizable(true);
+        scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         scroll->setFrameShape(QFrame::NoFrame);
         scroll->setWidget(keyboardRgbWidget);
         ui->tabWidget->insertTab(ui->tabWidget->indexOf(ui->keyboardTab) + 1, scroll, tr("RGB Lighting"));

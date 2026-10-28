@@ -8,14 +8,6 @@
         <translation>GPU mód</translation>
     </message>
     <message>
-        <source>Hybrid: the NVIDIA GPU sleeps and wakes up when an app needs it</source>
-        <translation>Hibrid: az NVIDIA GPU alszik, és felébred, ha egy alkalmazásnak szüksége van rá</translation>
-    </message>
-    <message>
-        <source>Integrated: the NVIDIA GPU is turned off completely (longest battery life)</source>
-        <translation>Integrált: az NVIDIA GPU teljesen ki van kapcsolva (leghosszabb akkuidő)</translation>
-    </message>
-    <message>
         <source>Turn off now</source>
         <translation>Kikapcsolás most</translation>
     </message>
@@ -32,20 +24,44 @@
         <translation>A helper szolgáltatás nem érhető el.</translation>
     </message>
     <message>
-        <source>&lt;b&gt;Current mode: discrete GPU only.&lt;/b&gt; The display is connected to the %1 by the MUX switch, so it cannot be turned off.</source>
-        <translation>&lt;b&gt;Jelenlegi mód: csak dedikált GPU.&lt;/b&gt; A kijelzőt a MUX kapcsoló a(z) %1 kártyára köti, ezért az nem kapcsolható ki.</translation>
-    </message>
-    <message>
-        <source>To use these modes, switch the GPU mode to &lt;b&gt;Hybrid&lt;/b&gt; (MSHybrid) in the BIOS setup and restart. On MSI laptops: press &lt;b&gt;Del&lt;/b&gt; repeatedly at startup, then look for the GPU / Graphics or MUX setting under &lt;i&gt;Advanced&lt;/i&gt;.</source>
-        <translation>A módok használatához állítsd a GPU módot &lt;b&gt;Hybrid&lt;/b&gt;-re (MSHybrid) a BIOS-ban, majd indítsd újra a gépet. MSI laptopon: bekapcsoláskor nyomogasd a &lt;b&gt;Del&lt;/b&gt; gombot, majd az &lt;i&gt;Advanced&lt;/i&gt; menüben keresd a GPU / Graphics vagy MUX beállítást.</translation>
-    </message>
-    <message>
         <source>No discrete GPU found.</source>
         <translation>Nem található dedikált GPU.</translation>
     </message>
     <message>
         <source>&lt;b&gt;Current mode: integrated.&lt;/b&gt; The NVIDIA GPU is off.</source>
         <translation>&lt;b&gt;Jelenlegi mód: integrált.&lt;/b&gt; Az NVIDIA GPU ki van kapcsolva.</translation>
+    </message>
+    <message>
+        <source>Hybrid</source>
+        <translation>Hibrid</translation>
+    </message>
+    <message>
+        <source>The Intel GPU drives the display; the NVIDIA GPU sleeps and wakes up when an app needs it.</source>
+        <translation>A kijelzőt az Intel GPU hajtja; az NVIDIA GPU alszik, és felébred, ha egy alkalmazásnak kell.</translation>
+    </message>
+    <message>
+        <source>Integrated</source>
+        <translation>Integrált</translation>
+    </message>
+    <message>
+        <source>The NVIDIA GPU is turned off completely. Longest battery life.</source>
+        <translation>Az NVIDIA GPU teljesen ki van kapcsolva. Leghosszabb akkuidő.</translation>
+    </message>
+    <message>
+        <source>Discrete</source>
+        <translation>Dedikált</translation>
+    </message>
+    <message>
+        <source>The display runs directly on the NVIDIA GPU. Best for gaming on the charger. Needs a restart.</source>
+        <translation>A kijelző közvetlenül az NVIDIA GPU-n fut. Töltőn játékhoz a legjobb. Újraindítás kell hozzá.</translation>
+    </message>
+    <message>
+        <source>Restart now</source>
+        <translation>Újraindítás most</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Current mode: discrete.&lt;/b&gt; The display runs on the %1.</source>
+        <translation>&lt;b&gt;Jelenlegi mód: dedikált.&lt;/b&gt; A kijelző a(z) %1 kártyán fut.</translation>
     </message>
     <message>
         <source>sleeping</source>
@@ -58,6 +74,34 @@
     <message>
         <source>&lt;b&gt;Current mode: hybrid.&lt;/b&gt; %1 is %2.</source>
         <translation>&lt;b&gt;Jelenlegi mód: hibrid.&lt;/b&gt; %1 – állapot: %2.</translation>
+    </message>
+    <message>
+        <source>Not available: %1</source>
+        <translation>Nem érhető el: %1</translation>
+    </message>
+    <message>
+        <source>discrete</source>
+        <translation>dedikált</translation>
+    </message>
+    <message>
+        <source>integrated</source>
+        <translation>integrált</translation>
+    </message>
+    <message>
+        <source>hybrid</source>
+        <translation>hibrid</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;Restart to switch to %1 mode.&lt;/b&gt; The firmware switches the display at startup; the screen may stay dark for a few seconds.</source>
+        <translation>&lt;b&gt;Indítsd újra a gépet a(z) %1 módra váltáshoz.&lt;/b&gt; A firmware induláskor kapcsolja át a kijelzőt, a képernyő néhány másodpercig sötét maradhat.</translation>
+    </message>
+    <message>
+        <source>The display is connected to the NVIDIA GPU by the MUX switch and this laptop&apos;s firmware switch cannot be used from Linux (%1). Change the GPU mode in the BIOS or in MSI Center on Windows.</source>
+        <translation>A kijelzőt a MUX kapcsoló az NVIDIA GPU-ra köti, és ennek a laptopnak a firmware-kapcsolója Linuxról nem használható (%1). A GPU módot a BIOS-ban vagy Windowson az MSI Centerben állíthatod át.</translation>
+    </message>
+    <message>
+        <source>Best performance and lowest latency on the charger. On battery it uses much more power than hybrid mode.</source>
+        <translation>Töltőn a legjobb teljesítmény és a legkisebb késleltetés. Akkuról sokkal többet fogyaszt, mint a hibrid mód.</translation>
     </message>
     <message>
         <source>Integrated mode is saved and will be applied at the next restart, before the desktop starts.</source>
@@ -76,6 +120,14 @@
     <message>
         <source>The NVIDIA GPU is back. Apps can use it right away; log out and back in if the desktop should also use it.</source>
         <translation>Az NVIDIA GPU újra elérhető. Az alkalmazások azonnal használhatják; ha az asztal is használja, jelentkezz ki és vissza.</translation>
+    </message>
+    <message>
+        <source>Restart</source>
+        <translation>Újraindítás</translation>
+    </message>
+    <message>
+        <source>Restart the computer now? Save your work first.</source>
+        <translation>Újraindítod most a gépet? Előtte mentsd el a munkádat.</translation>
     </message>
 </context>
 <context>

@@ -26,7 +26,12 @@ class QLabel;
 class QPushButton;
 class QRadioButton;
 
-/// "GPU" page: hybrid mode or integrated mode (dGPU fully off).
+/**
+ * "GPU" page:
+ *  - Hybrid: the iGPU drives the display, the NVIDIA GPU works on demand
+ *  - Integrated: the NVIDIA GPU is removed from the bus (applied now or at boot)
+ *  - Discrete: the firmware MUX connects the display to the NVIDIA GPU (after a restart)
+ */
 class GpuWidget : public QWidget {
     Q_OBJECT
 public:
@@ -44,12 +49,16 @@ private:
     QLabel *infoLabel = nullptr;
     QRadioButton *hybridRadio = nullptr;
     QRadioButton *integratedRadio = nullptr;
+    QRadioButton *discreteRadio = nullptr;
     QPushButton *retryButton = nullptr;
+    QPushButton *restartButton = nullptr;
     bool updating = false;
 
     QString call(const QString &method) const;
-    void setMode(const QString &mode);
+    QString call(const QString &method, const QString &arg) const;
+    void choose(const QString &mode);
     void showPending();
+    void restartNow();
 };
 
 #endif // GPU_WIDGET_H

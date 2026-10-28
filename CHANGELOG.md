@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 
 ## Unreleased
+### Added
+- Discrete GPU mode (firmware MUX) on the GPU page, applied after a restart, with a "Restart now" button.
+  Uses the MsiDCVarData UEFI variable and SMI 0x11 like MSI Center; limited to known variable layouts,
+  requires the charger, refused under kernel lockdown, backups in /var/lib/mcontrolcenter/mux-backup/.
+
 ### Changed
 - New look that follows the GTK theme: Qt's GTK3 platform theme supplies colors, fonts, icons and
   file dialogs on GNOME-like desktops. A GNOME-style header bar (window buttons on the side set in
