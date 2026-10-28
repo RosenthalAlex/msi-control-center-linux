@@ -46,6 +46,11 @@ namespace {
         {"0003:00001462:00001601", "MSI Mystic Light MS-1565"},
     };
 
+    // The controller remembers the zone selection; resending it on every frame of a
+    // fade can make the keys flash, so only send it when it changes.
+    int lastZoneMask = -1;
+    QString lastDevice;
+
     QByteArray emptyReport(char packetId) {
         QByteArray report(reportSize, '\0');
         report[0] = reportId;
@@ -125,8 +130,13 @@ bool KeyboardRgb::setZoneEffect(int zoneMask, int mode, int speed, int direction
         }
     }
 
-    QByteArray select = emptyReport(0x01);
-    select[2] = static_cast<char>(zoneMask);
+    QList<QByteArray> reports;
+    const QString device = findDevice();
+    if (zoneMask != lastZoneMask || device != lastDevice) {
+        QByteArray select = emptyReport(0x01);
+        select[2] = static_cast<char>(zoneMask);
+        reports.append(select);
+    }
 
     QByteArray effect = emptyReport(0x02);
     effect[2] = static_cast<char>(mode);
@@ -137,7 +147,14 @@ bool KeyboardRgb::setZoneEffect(int zoneMask, int mode, int speed, int direction
     effect[9] = static_cast<char>(direction);
     effect.replace(10, keyframes.size(), keyframes);
 
-    return sendFeatureReports({select, effect});
+    reports.append(effect);
+    if (!sendFeatureReports(reports)) {
+        lastZoneMask = -1; // resend the selection next time
+        return false;
+    }
+    lastZoneMask = zoneMask;
+    lastDevice = device;
+    return true;
 }
 
 bool KeyboardRgb::saveToFlash() const {

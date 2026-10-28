@@ -67,6 +67,7 @@ private:
     AccentWatcher *accentWatcher = nullptr;
     QVariantAnimation *fade = nullptr;
     qint64 lastFadeApply = 0;
+    QColor fadeFrom, fadeTarget, fadeCurrent;
 
     /// Smoothly changes all zones to the given color.
     void fadeTo(const QColor &target);
