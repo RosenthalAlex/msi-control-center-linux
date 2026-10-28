@@ -26,7 +26,9 @@
 
 #include <array>
 
+class AccentWatcher;
 class QCheckBox;
+class QVariantAnimation;
 class QComboBox;
 class QLabel;
 class QPushButton;
@@ -60,6 +62,15 @@ private:
     std::array<QPushButton *, KeyboardRgb::zoneCount> colorButtons{};
     QCheckBox *restoreCheck = nullptr;
     QPushButton *saveButton = nullptr;
+    QCheckBox *accentCheck = nullptr;
+    QList<QPushButton *> presetButtons;
+    AccentWatcher *accentWatcher = nullptr;
+    QVariantAnimation *fade = nullptr;
+    qint64 lastFadeApply = 0;
+
+    /// Smoothly changes all zones to the given color.
+    void fadeTo(const QColor &target);
+    void followAccentNow(bool animated);
 
     void buildUi();
     void loadToUi();

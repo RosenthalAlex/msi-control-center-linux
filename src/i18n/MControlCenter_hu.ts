@@ -216,6 +216,18 @@
         <translation>Gyors színek:</translation>
     </message>
     <message>
+        <source>Follow the GNOME accent color</source>
+        <translation>A GNOME kiemelőszínének követése</translation>
+    </message>
+    <message>
+        <source>The keyboard always lights up in the desktop&apos;s accent color and fades to the new one when it changes (e.g. with the Auto Accent Colour extension).</source>
+        <translation>A billentyűzet mindig az asztal kiemelőszínében világít, és lágy átmenettel vált az újra, ha az megváltozik (például az Auto Accent Colour bővítménnyel).</translation>
+    </message>
+    <message>
+        <source>Needs GNOME 47 or newer (accent color setting).</source>
+        <translation>GNOME 47 vagy újabb kell hozzá (kiemelőszín-beállítás).</translation>
+    </message>
+    <message>
         <source>Restore this lighting when MControlCenter starts and after sleep</source>
         <translation>Világítás visszaállítása az MControlCenter indulásakor és alvás után</translation>
     </message>

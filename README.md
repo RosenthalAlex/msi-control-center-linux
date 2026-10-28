@@ -29,6 +29,8 @@ It is built and tested on the **MSI Katana 15 HX B14WFK** (MS-1587) and works on
 **Keyboard**
 - 4-zone RGB lighting for the MSI Mystic Light MS-1565 controller (USB `1462:1601`, e.g. Katana 15/17 HX):
   static, breathing, color cycle, rainbow wave, per-zone colors, brightness, speed, save to keyboard memory
+- Keyboard color can follow the GNOME accent color (e.g. with Auto Accent Colour it matches the wallpaper),
+  fading smoothly to each new color
 - Working touchpad on/off key on Katana HX laptops
 - Fn ⇄ Win key swap, webcam on/off
 

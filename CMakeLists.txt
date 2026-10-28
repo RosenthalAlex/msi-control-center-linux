@@ -40,6 +40,7 @@ set(PROJECT_SOURCES
     src/gpu_widget.cpp src/gpu_widget.h
     src/appstyle.cpp src/appstyle.h
     src/headerbar.cpp src/headerbar.h
+    src/accent_color.cpp src/accent_color.h
     src/settings.cpp src/settings.h
     src/resources.qrc
 )

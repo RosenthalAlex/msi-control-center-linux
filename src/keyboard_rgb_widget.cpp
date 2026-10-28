@@ -17,6 +17,11 @@
  */
 
 #include "keyboard_rgb_widget.h"
+#include "accent_color.h"
+
+#include <QDateTime>
+#include <QEasingCurve>
+#include <QVariantAnimation>
 
 #include <QCheckBox>
 #include <QColorDialog>
@@ -41,6 +46,12 @@ KeyboardRgbWidget::KeyboardRgbWidget(QWidget *parent) : QWidget(parent) {
     available = rgb.isAvailable();
     state = KeyboardRgb::loadState();
     loadToUi();
+
+    accentWatcher = new AccentWatcher(this);
+    connect(accentWatcher, &AccentWatcher::accentChanged, this, [this](const QColor &) {
+        if (state.followAccent)
+            followAccentNow(true);
+    });
 
     if (available) {
         statusLabel->setText(tr("Controller: %1").arg(rgb.deviceName()));
@@ -114,6 +125,7 @@ void KeyboardRgbWidget::buildUi() {
                               {255, 255, 255}};
     for (const QColor &c : presets) {
         auto *b = new QPushButton(colorBox);
+        presetButtons.append(b);
         b->setFixedSize(26, 26);
         b->setToolTip(c.name());
         b->setStyleSheet(QString("QPushButton { background-color: %1; border: 1px solid palette(mid);"
@@ -123,6 +135,15 @@ void KeyboardRgbWidget::buildUi() {
     }
     presetRow->addStretch();
     colorLayout->addLayout(presetRow, 3, 0, 1, KeyboardRgb::zoneCount);
+
+    accentCheck = new QCheckBox(tr("Follow the GNOME accent color"), colorBox);
+    accentCheck->setToolTip(tr("The keyboard always lights up in the desktop's accent color and fades to "
+                               "the new one when it changes (e.g. with the Auto Accent Colour extension)."));
+    colorLayout->addWidget(accentCheck, 4, 0, 1, KeyboardRgb::zoneCount);
+    if (!AccentWatcher::isSupported()) {
+        accentCheck->setEnabled(false);
+        accentCheck->setToolTip(tr("Needs GNOME 47 or newer (accent color setting)."));
+    }
     mainLayout->addWidget(colorBox);
 
     restoreCheck = new QCheckBox(tr("Restore this lighting when MControlCenter starts and after sleep"), this);
@@ -146,6 +167,15 @@ void KeyboardRgbWidget::buildUi() {
             setAllColors(state.colors[0]);
         onChanged();
     });
+    connect(accentCheck, &QCheckBox::toggled, this, [this](bool on) {
+        if (loading)
+            return;
+        state.followAccent = on;
+        KeyboardRgb::saveState(state);
+        updateEnabledState();
+        if (on)
+            followAccentNow(true);
+    });
     connect(restoreCheck, &QCheckBox::toggled, this, [this](bool on) {
         state.restoreOnStart = on;
         KeyboardRgb::saveState(state);
@@ -165,6 +195,7 @@ void KeyboardRgbWidget::loadToUi() {
     directionCombo->setCurrentIndex(state.direction);
     sameColorCheck->setChecked(state.sameColorForAllZones);
     restoreCheck->setChecked(state.restoreOnStart);
+    accentCheck->setChecked(state.followAccent && AccentWatcher::isSupported());
     for (int i = 0; i < KeyboardRgb::zoneCount; i++)
         updateColorButton(i);
     brightnessValue->setText(QString("%1 %").arg(state.brightness));
@@ -180,9 +211,12 @@ void KeyboardRgbWidget::updateEnabledState() {
     brightnessSlider->setEnabled(effect != KeyboardRgb::Effect::Off);
     speedSlider->setEnabled(animated);
     directionCombo->setEnabled(effect == KeyboardRgb::Effect::Wave);
-    sameColorCheck->setEnabled(usesColor);
+    const bool manualColor = usesColor && !state.followAccent;
+    sameColorCheck->setEnabled(manualColor);
     for (int i = 0; i < KeyboardRgb::zoneCount; i++)
-        colorButtons[i]->setEnabled(usesColor && (i == 0 || !state.sameColorForAllZones));
+        colorButtons[i]->setEnabled(manualColor && (i == 0 || !state.sameColorForAllZones));
+    for (auto *b : presetButtons)
+        b->setEnabled(!state.followAccent);
 }
 
 void KeyboardRgbWidget::updateColorButton(int zone) {
@@ -246,6 +280,75 @@ void KeyboardRgbWidget::applyNow() {
 }
 
 void KeyboardRgbWidget::restore() {
-    if (available && state.restoreOnStart)
+    if (!available)
+        return;
+    if (state.followAccent && AccentWatcher::isSupported()) {
+        followAccentNow(false);
+        return;
+    }
+    if (state.restoreOnStart)
         rgb.apply(state);
+}
+
+void KeyboardRgbWidget::followAccentNow(bool animated) {
+    const QColor target = AccentWatcher::ledColor(AccentWatcher::accentColor());
+    // Accent colors need a color effect; keep breathing, otherwise use static.
+    if (state.effect != KeyboardRgb::Effect::Static && state.effect != KeyboardRgb::Effect::Breathing) {
+        const bool was = loading;
+        loading = true;
+        effectCombo->setCurrentIndex(effectCombo->findData(static_cast<int>(KeyboardRgb::Effect::Static)));
+        loading = was;
+        state.effect = KeyboardRgb::Effect::Static;
+    }
+    state.sameColorForAllZones = true;
+    {
+        const bool was = loading;
+        loading = true;
+        sameColorCheck->setChecked(true);
+        loading = was;
+    }
+    updateEnabledState();
+    if (animated && state.effect == KeyboardRgb::Effect::Static && state.colors[0] != target) {
+        fadeTo(target);
+    } else {
+        for (int i = 0; i < KeyboardRgb::zoneCount; i++) {
+            state.colors[i] = target;
+            updateColorButton(i);
+        }
+        applyNow();
+    }
+}
+
+void KeyboardRgbWidget::fadeTo(const QColor &target) {
+    if (!fade) {
+        fade = new QVariantAnimation(this);
+        fade->setDuration(1200);
+        fade->setEasingCurve(QEasingCurve::InOutQuad);
+        connect(fade, &QVariantAnimation::valueChanged, this, [this](const QVariant &v) {
+            // About 25 updates per second is smooth on the keyboard and light on D-Bus.
+            const qint64 now = QDateTime::currentMSecsSinceEpoch();
+            if (now - lastFadeApply < 40)
+                return;
+            lastFadeApply = now;
+            KeyboardRgb::State frame = state;
+            frame.colors.fill(v.value<QColor>());
+            rgb.apply(frame);
+        });
+        connect(fade, &QVariantAnimation::finished, this, [this]() {
+            const QColor end = fade->endValue().value<QColor>();
+            for (int i = 0; i < KeyboardRgb::zoneCount; i++) {
+                state.colors[i] = end;
+                updateColorButton(i);
+            }
+            applyNow();
+        });
+    }
+    // Continue from the current shade if a fade is already running.
+    const QColor from = fade->state() == QAbstractAnimation::Running ? fade->currentValue().value<QColor>()
+                                                                       : state.colors[0];
+    fade->stop();
+    fade->setStartValue(from);
+    fade->setEndValue(target);
+    lastFadeApply = 0;
+    fade->start();
 }
