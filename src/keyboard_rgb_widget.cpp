@@ -59,6 +59,8 @@ void KeyboardRgbWidget::buildUi() {
 
     auto *effectBox = new QGroupBox(tr("Effect"), this);
     auto *form = new QFormLayout(effectBox);
+    form->setVerticalSpacing(10);
+    form->setHorizontalSpacing(14);
 
     effectCombo = new QComboBox(effectBox);
     effectCombo->addItem(tr("Off"), static_cast<int>(KeyboardRgb::Effect::Off));
