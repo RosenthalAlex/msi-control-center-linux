@@ -319,36 +319,59 @@ void KeyboardRgbWidget::followAccentNow(bool animated) {
     }
 }
 
+namespace {
+    /// Blend two colors along the hue circle (shortest way), so a fade stays
+    /// saturated instead of passing through a pale grey/pink middle.
+    QColor blendHue(const QColor &a, const QColor &b, qreal t) {
+        float ha, sa, va, hb, sb, vb;
+        a.getHsvF(&ha, &sa, &va);
+        b.getHsvF(&hb, &sb, &vb);
+        if (ha < 0) ha = hb;   // grey/white has no hue: borrow the other one
+        if (hb < 0) hb = ha;
+        if (ha < 0) {          // both grey
+            ha = hb = 0;
+        }
+        float dh = hb - ha;
+        if (dh > 0.5f) dh -= 1.0f;
+        if (dh < -0.5f) dh += 1.0f;
+        float h = ha + dh * float(t);
+        if (h < 0) h += 1.0f;
+        if (h >= 1) h -= 1.0f;
+        return QColor::fromHsvF(h, sa + (sb - sa) * float(t), va + (vb - va) * float(t));
+    }
+}
+
 void KeyboardRgbWidget::fadeTo(const QColor &target) {
     if (!fade) {
         fade = new QVariantAnimation(this);
         fade->setDuration(1200);
         fade->setEasingCurve(QEasingCurve::InOutQuad);
+        fade->setStartValue(0.0);
+        fade->setEndValue(1.0);
         connect(fade, &QVariantAnimation::valueChanged, this, [this](const QVariant &v) {
+            fadeCurrent = blendHue(fadeFrom, fadeTarget, v.toReal());
             // About 25 updates per second is smooth on the keyboard and light on D-Bus.
             const qint64 now = QDateTime::currentMSecsSinceEpoch();
             if (now - lastFadeApply < 40)
                 return;
             lastFadeApply = now;
             KeyboardRgb::State frame = state;
-            frame.colors.fill(v.value<QColor>());
+            frame.colors.fill(fadeCurrent);
             rgb.apply(frame);
         });
         connect(fade, &QVariantAnimation::finished, this, [this]() {
-            const QColor end = fade->endValue().value<QColor>();
             for (int i = 0; i < KeyboardRgb::zoneCount; i++) {
-                state.colors[i] = end;
+                state.colors[i] = fadeTarget;
                 updateColorButton(i);
             }
             applyNow();
         });
     }
     // Continue from the current shade if a fade is already running.
-    const QColor from = fade->state() == QAbstractAnimation::Running ? fade->currentValue().value<QColor>()
-                                                                       : state.colors[0];
+    fadeFrom = fade->state() == QAbstractAnimation::Running ? fadeCurrent : state.colors[0];
+    fadeCurrent = fadeFrom;
+    fadeTarget = target;
     fade->stop();
-    fade->setStartValue(from);
-    fade->setEndValue(target);
-    lastFadeApply = 0;
+    lastFadeApply = QDateTime::currentMSecsSinceEpoch(); // skip the frame equal to the current color
     fade->start();
 }
