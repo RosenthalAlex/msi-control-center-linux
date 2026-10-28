@@ -95,7 +95,7 @@ drawn as traffic lights. Run with `MCC_NATIVE_DECORATIONS=1` for the system wind
   The app requests it the same way MSI Center does: a 2-bit code in the UEFI variable `MsiDCVarData` plus a
   firmware call (SMI 0x11), applied at the next boot. Switching back to Hybrid works the same way.
   Safeguards: only on MSI laptops, only with a known variable layout (seen on the Katana 15 HX B14WFK and the
-  Vector 16 HX), only on the charger, not under kernel lockdown (Secure Boot), and every previous value is saved
+  Vector 16 HX), only on the charger or above 10 % battery, not under kernel lockdown (Secure Boot), and every previous value is saved
   in `/var/lib/mcontrolcenter/mux-backup/`. Method from [msi-gpu-mode](https://github.com/ege-adam/msi-gpu-mode).
   On other laptops use the BIOS or MSI Center.
 
