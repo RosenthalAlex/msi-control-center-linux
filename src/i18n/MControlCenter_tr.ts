@@ -78,6 +78,13 @@
     </message>
 </context>
 <context>
+    <name>HeaderBar</name>
+    <message>
+        <source>Menu</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>KeyboardRgbWidget</name>
     <message>
         <source>Controller: %1</source>
@@ -606,6 +613,21 @@ Check the &lt;About&gt; page for more info.</source>
     </message>
     <message>
         <source>OFF</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WindowButton</name>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maximize</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

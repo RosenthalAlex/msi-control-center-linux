@@ -2,7 +2,7 @@
 #   cd packaging/arch && makepkg -si
 pkgname=mcontrolcenter-katana
 pkgver=0.6.0
-pkgrel=7
+pkgrel=8
 pkgdesc="MSI Control Center for Linux: performance modes, fan curves, battery limit, GPU mode, RGB keyboard"
 arch=('x86_64')
 url="https://github.com/RosenthalAlex/msi-control-center-linux"

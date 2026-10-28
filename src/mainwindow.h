@@ -31,6 +31,8 @@ namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
 class KeyboardRgbWidget;
+class HeaderBar;
+class QListWidget;
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
@@ -98,6 +100,20 @@ private:
 
     void showEvent(QShowEvent *event);
     void closeEvent(QCloseEvent *event);
+
+    // Client-side decorations (GTK-like header bar, sidebar, rounded window)
+    HeaderBar *headerBar = nullptr;
+    QWidget *sidebarPane = nullptr;
+    QListWidget *sidebar = nullptr;
+    QMenu *appMenu = nullptr;
+    void setupModernLayout();
+    void rebuildSidebar();
+    [[nodiscard]] int shadowMargin() const;
+    [[nodiscard]] Qt::Edges edgesAt(const QPoint &pos) const;
+    void paintEvent(QPaintEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void changeEvent(QEvent *event) override;
     void quitApp() const;
 
     QTimer timerSleepWatcher;

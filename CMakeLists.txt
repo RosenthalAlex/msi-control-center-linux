@@ -38,6 +38,8 @@ set(PROJECT_SOURCES
     src/keyboard_rgb_widget.cpp src/keyboard_rgb_widget.h
     src/sysinfo.cpp src/sysinfo.h
     src/gpu_widget.cpp src/gpu_widget.h
+    src/appstyle.cpp src/appstyle.h
+    src/headerbar.cpp src/headerbar.h
     src/settings.cpp src/settings.h
     src/resources.qrc
 )

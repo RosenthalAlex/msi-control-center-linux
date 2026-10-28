@@ -78,6 +78,13 @@
     </message>
 </context>
 <context>
+    <name>HeaderBar</name>
+    <message>
+        <source>Menu</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>KeyboardRgbWidget</name>
     <message>
         <source>Controller: %1</source>
@@ -604,6 +611,21 @@ Make sure that either Power Profiles Daemon or TuneD is installed and restart th
     <message>
         <source>MSI-EC GitHub:</source>
         <translation></translation>
+    </message>
+</context>
+<context>
+    <name>WindowButton</name>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maximize</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
