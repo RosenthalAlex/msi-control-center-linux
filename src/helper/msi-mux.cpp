@@ -51,13 +51,24 @@ namespace {
                (static_cast<unsigned char>(raw[modeByte]) >> 4) == 0x3;
     }
 
-    bool onAcPower() {
+    /// Enough power for a firmware write: on the charger, or battery above 10 %.
+    bool enoughPower() {
         const QDir dir("/sys/class/power_supply");
+        bool sawBattery = false;
         for (const QString &e : dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot | QDir::System)) {
-            if (readText(dir.filePath(e) + "/type") == "Mains" && readText(dir.filePath(e) + "/online") == "1")
+            const QString path = dir.filePath(e);
+            const QString type = readText(path + "/type");
+            if (type == "Mains" && readText(path + "/online") == "1")
                 return true;
+            if (type == "Battery" && readText(path + "/scope") != "Device") {
+                sawBattery = true;
+                bool ok = false;
+                const int capacity = readText(path + "/capacity").toInt(&ok);
+                if (ok && capacity > 10)
+                    return true;
+            }
         }
-        return false;
+        return !sawBattery; // no battery info at all: do not block
     }
 
     bool lockdownActive() {
@@ -130,8 +141,8 @@ QString MsiMux::request(Mode mode) {
     const State st = read();
     if (!st.writable)
         return st.reason.isEmpty() ? "GPU switching is not available" : st.reason;
-    if (!onAcPower())
-        return "connect the charger before switching the GPU mode";
+    if (!enoughPower())
+        return "the battery is too low (10 % or less); connect the charger first";
 
     QFile f(varPath);
     if (!f.open(QIODevice::ReadOnly))
