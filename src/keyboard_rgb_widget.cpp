@@ -18,6 +18,7 @@
 
 #include "keyboard_rgb_widget.h"
 #include "accent_color.h"
+#include "settings.h"
 
 #include <QDateTime>
 #include <QEasingCurve>
@@ -316,7 +317,24 @@ void KeyboardRgbWidget::followAccentNow(bool animated) {
             updateColorButton(i);
         }
         applyNow();
+        storeAccentInKeyboard();
     }
+}
+
+void KeyboardRgbWidget::storeAccentInKeyboard() {
+    // Keep the accent lighting in the controller's memory too, so the keyboard
+    // already shows it at boot and on the login screen, before this app runs.
+    // Only when the stored lighting actually changes, to spare the flash.
+    if (!available || !state.followAccent)
+        return;
+    const QString stored = QString("%1/%2/%3").arg(state.colors[0].name())
+                                              .arg(static_cast<int>(state.effect))
+                                              .arg(state.brightness);
+    Settings s;
+    if (s.getValue("KeyboardRgb/storedInKeyboard").toString() == stored)
+        return;
+    if (rgb.saveToFlash())
+        Settings::setValue("KeyboardRgb/storedInKeyboard", stored);
 }
 
 namespace {
@@ -365,6 +383,7 @@ void KeyboardRgbWidget::fadeTo(const QColor &target) {
                 updateColorButton(i);
             }
             applyNow();
+            storeAccentInKeyboard();
         });
     }
     // Continue from the current shade if a fade is already running.

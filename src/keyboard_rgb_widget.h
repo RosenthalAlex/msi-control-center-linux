@@ -72,6 +72,7 @@ private:
     /// Smoothly changes all zones to the given color.
     void fadeTo(const QColor &target);
     void followAccentNow(bool animated);
+    void storeAccentInKeyboard();
 
     void buildUi();
     void loadToUi();
